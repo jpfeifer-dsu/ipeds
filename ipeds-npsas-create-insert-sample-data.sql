@@ -15,7 +15,7 @@ create table ipeds_npsas_sample_data_2020 (
 /*
  **** STOP *****
  Save the file as a csv.  Clean up empty rows and columns and import to ipeds_npsas_sample_data_20xx using datagrip
- and right clicking on the table and choosing import
+ by right clicking on the table and choosing import
  */
 
 select *
