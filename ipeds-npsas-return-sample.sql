@@ -12,17 +12,17 @@
  */
  ------------------------------------------------------------------------------------------------------------
 
- DROP   TABLE enroll.ipeds_npsas_18;
- CREATE TABLE enroll.ipeds_npsas_18
+ DROP   TABLE enroll.ipeds_npsas_sample_20;
+ CREATE TABLE enroll.ipeds_npsas_sample_20
  (
    -- General -----------------------------------------------------------------------------------------------------------------
    ipeds_fsvn         VARCHAR2(2),   -- File Specification Version Number
    ipeds_instid       VARCHAR2(6),   -- Institute ID
-   ipeds_studyid      VARCHAR2(99),  -- Study ID
+   ipeds_studyid      VARCHAR2(8),  -- Study ID
    dsu_term           VARCHAR2(6),   --
    dsu_pidm           VARCHAR2(9),   --
    dsu_hsgrad_dt      VARCHAR2(8),   --
-   ipeds_studentid    VARCHAR2(8),   -- Student ID
+   ipeds_studentid    VARCHAR2(20),   -- Student ID
    first_name         VARCHAR2(50),  -- First Name
    middle_name        VARCHAR2(50),  -- Middle Name
    last_name          VARCHAR2(50),  -- Last Name
@@ -32,7 +32,7 @@
    dob_day            VARCHAR2(2),   -- DOB Day
    dob_year           VARCHAR2(4),   -- DOB Year
    gender             VARCHAR2(2),   -- Sex
-   npsas_eligible     VARCHAR2(2),   -- Student is eligible for NPSAS:18-AC?
+   npsas_eligible     VARCHAR2(1),   -- Student is eligible for NPSAS:18-AC?
    ineligible_reason  VARCHAR2(2),   -- Ineligible Reason
    marital_status     VARCHAR2(2),   -- Marital Status
    maiden_name        VARCHAR2(50),  -- Maiden Name
@@ -49,29 +49,29 @@
    race_asian         VARCHAR2(2),   -- Race: Asian
    race_indian        VARCHAR2(2),   -- Race: American Indian or Alaska Native
    race_hawaiian      VARCHAR2(2),   -- Race: Native Hawaiian or addtl Pacific Islander
-   perm_add_line1     VARCHAR2(100), -- Permanent Address Line 1
+   perm_add_line1     VARCHAR2(50),  -- Permanent Address Line 1
    perm_add_line2     VARCHAR2(50),  -- Permanent Address Line 2
    perm_add_city      VARCHAR2(50),  -- Permanent Address City
    perm_add_state     VARCHAR2(2),   -- Permanent Address State
    perm_add_zip       VARCHAR2(9),   -- Permanent Address Zip
    perm_add_country   VARCHAR2(50),  -- Permanent Address Country (if not USA)
    is_perm_resd       VARCHAR2(2),   -- Is the student a permanent resident of the state in which your institution is located?
-   local_add_line1    VARCHAR2(100), -- Local/Most Recent Address Line 1
+   local_add_line1    VARCHAR2(50), -- Local/Most Recent Address Line 1
    local_add_line2    VARCHAR2(50),  -- Local/Most Recent Address Line 2
    local_add_city     VARCHAR2(50),  -- Local/Most Recent Address City
    local_add_state    VARCHAR2(2),   -- Local/Most Recent Address State
    local_add_zip      VARCHAR2(9),   -- Local/Most Recent Address Zip
    phone1_number      VARCHAR2(10),  -- Phone 1 Number
-   phone1_type        VARCHAR2(2),   -- Phone 1 Type
+   phone1_type        VARCHAR2(1),   -- Phone 1 Type
    phone2_number      VARCHAR2(10),  -- Phone 2 Number
-   phone2_type        VARCHAR2(2),   -- Phone 2 Type
+   phone2_type        VARCHAR2(1),   -- Phone 2 Type
    email_campus       VARCHAR2(100), -- Campus Email
    email_personal     VARCHAR2(100), -- Personal Email
    parent_first_name  VARCHAR2(50),  -- Parent First Name
    parent_middle_name VARCHAR2(50),  -- Parent Middle Name
    parent_last_name   VARCHAR2(50),  -- Parent Last Name
    parent_suffix      VARCHAR2(10),  -- Parent Suffix
-   parent_add_line1   VARCHAR2(100), -- Parent Address Line 1
+   parent_add_line1   VARCHAR2(50), -- Parent Address Line 1
    parent_add_line2   VARCHAR2(50),  -- Parent Address Line 2
    parent_add_city    VARCHAR2(50),  -- Parent Address City
    parent_add_state   VARCHAR2(2),   -- Parent Address State or Province
@@ -80,13 +80,13 @@
    parent_email       VARCHAR2(100), -- Parent Email
    parent_phone       VARCHAR2(10),  -- Parent Phone
    parent_cell        VARCHAR2(10),  -- Parent Cell Phone
-   parent_int_phone   VARCHAR2(10),  -- Parent International Phone
+   parent_int_phone   VARCHAR2(20),  -- Parent International Phone
    other_first_name   VARCHAR2(50),  -- Other Contact First Name
    other_middle_name  VARCHAR2(50),  -- Other Contact Middle Name
    other_last_name    VARCHAR2(50),  -- Other Contact Last Name
    other_suffix       VARCHAR2(10),  -- Other Contact Suffix
    other_relation     VARCHAR2(2),   -- Relationship of Other Contact to Student
-   other_add_line1    VARCHAR2(100), -- Other Contact Address Line 1
+   other_add_line1    VARCHAR2(50), -- Other Contact Address Line 1
    other_add_line2    VARCHAR2(50),  -- Other Contact Address Line 2
    other_add_city     VARCHAR2(50),  -- Other Contact Address City
    other_add_state    VARCHAR2(2),   -- Other Contact Address State or Province
@@ -103,47 +103,52 @@
    last_enrl_day      VARCHAR2(2),   -- Date Last Enrolled at this Institution (Day)
    last_enrl_year     VARCHAR2(4),   -- Date Last Enrolled at this Institution (Year)
 
-   degree_by_063018   VARCHAR2(2),   -- Expected to complete degree requirements before June 30, 2017?
-   has_xfer_hours     VARCHAR2(2),   -- Has your institution accepted transfer credit for this student from another postsecondary institution?
+   degree_by_063020   VARCHAR2(1),   -- Expected to complete degree requirements before June 30, 2020?
+   has_xfer_hours     VARCHAR2(1),   -- Has your institution accepted transfer credit for this student from another postsecondary institution?
    has_rem_dev_hours  VARCHAR2(2),   -- Since completing high school, has the student taken any remedial/developmental courses to improve their basic skills in English, math, reading, or writing?
-   is_first_time_stu  VARCHAR2(2),   -- First-time Beginning Student?
-   has_bach_degree    VARCHAR2(1),   -- Ever Received Baccalaureate Degree?
+   is_first_time_stu  VARCHAR2(1),   -- First-time Beginning Student?
+   has_bach_degree    VARCHAR2(2),   -- Ever Received Baccalaureate Degree?
    bach_rec_month     VARCHAR2(2),   -- Date Baccalaureate Received (Month)
    bach_rec_day       VARCHAR2(2),   -- Date Baccalaureate Received (Day)
    bach_rec_year      VARCHAR2(4),   -- Date Baccalaureate Received (Year)
-   act_engl_score     VARCHAR2(10),  -- ACT English Score
-   act_math_score     VARCHAR2(10),  -- ACT Mathematics Score
-   act_read_score     VARCHAR2(10),  -- ACT Reading Score
-   act_sci_score      VARCHAR2(10),  -- ACT Science Score
-   act_comp_score     VARCHAR2(10),  -- ACT Composite Score
-   sat_read_score     VARCHAR2(10),  -- SAT Critical Reading Score
-   sat_math_score     VARCHAR2(10),  -- SAT Mathematics Score
-   sat_writ_score     VARCHAR2(10),  -- SAT Writing Score
+   act_engl_score     VARCHAR2(4),   -- ACT English Score
+   act_math_score     VARCHAR2(4),   -- ACT Mathematics Score
+   act_read_score     VARCHAR2(4),   -- ACT Reading Score
+   act_sci_score      VARCHAR2(4),   -- ACT Science Score
+   act_comp_score     VARCHAR2(4),   -- ACT Composite Score
+   sat_read_score     VARCHAR2(4),   -- SAT Critical Reading Score
+   sat_math_score     VARCHAR2(4),   -- SAT Mathematics Score
+   sat_essay_score    VARCHAR2(4),   -- SAT Essay Score
 
-   program_ay1718     VARCHAR2(2),   -- Program/Degree (2017-2018 academic year)
-   grad_degree_ay1718 VARCHAR2(2),   -- Graduate Degree Type (FOR GRADUATE DEGREES ONLY) (2017-2018 academic year)
-   class_level_ay1718 VARCHAR2(2),   -- Class Level (2017-2018 academic year)
-   grad_month_ay1718  VARCHAR2(2),   -- Degree Completion Date (Month) (FOR COMPLETED DEGREES) (2017-2018 academic year)
-   grad_day_ay1718    VARCHAR2(2),   -- Degree Completion Date (Day) (FOR COMPLETED DEGREES) (2017-2018 academic year)
-   grad_year_ay1718   VARCHAR2(4),   -- Degree Completion Date (Year) (FOR COMPLETED DEGREES) (2017-2018 academic year)
-   cum_gpa_ay1718     VARCHAR2(10),  -- Cumulative (Unweighted) GPA (2017-2018 academic year)
-   major1_ay1718      VARCHAR2(128), -- First Major (2017-2018 academic year)
-   cip1_ay1718        VARCHAR2(6),   -- First Major CIP Code (NNNNNN) (2017-2018 academic year)
-   major2_ay1718      VARCHAR2(128), -- Second Major (2017-2018 academic year)
-   cip2_ay1718        VARCHAR2(6),   -- Second Major CIP Code (NNNNNN) (2017-2018 academic year)
-   undeclared_ay1718  VARCHAR2(2),   -- Major Undeclared (2017-2018 academic year)
-   prgm_hrs_ay1718    VARCHAR2(10),  -- Total Number of Clock Hours in Program (2017-2018 academic year)
-   hrs_clock_ay1718   VARCHAR2(10),  -- Cumulative Clock Hours Completed (2017-2018 academic year)
-   hrs_credit_ay1718  VARCHAR2(10),  -- Total Number of Credit Hours in Program (2017-2018 academic year)
-   cum_credits_ay1718 VARCHAR2(10),  -- Cumulative Credit Hours Completed (2017-2018 academic year)
-   tuition_ay1718     VARCHAR2(10),  -- TotalTuition and Mandatory Fees Charged ($) (2017-2018 academic year)
-   residency_ay1718   VARCHAR2(2),   -- Residency for Tuition Purposes (2017-2018 academic year)
-   enroll_summer_ptft VARCHAR2(2),   -- Enrollment Status (2017-2018 academic year)
-   enroll_summer_hrs  VARCHAR2(10),  -- Attempted Credits (2017-2018 academic year)
-   enroll_fall_ptft   VARCHAR2(2),   -- Enrollment Status (2017-2018 academic year)
-   enroll_fall_hrs    VARCHAR2(10),  -- Attempted Credits (2017-2018 academic year)
-   enroll_spring_ptft VARCHAR2(2),   -- Enrollment Status (2017-2018 academic year)
-   enroll_spring_hrs  VARCHAR2(10)   -- Attempted Credits (2017-2018 academic year)
+   program_ay1920     VARCHAR2(2),   -- Program/Degree (2017-2018 academic year)
+   grad_degree_ay1920 VARCHAR2(2),   -- Graduate Degree Type (FOR GRADUATE DEGREES ONLY) (2017-2018 academic year)
+   class_level_ay1920 VARCHAR2(2),   -- Class Level (2017-2018 academic year)
+   grad_month_ay1920  VARCHAR2(2),   -- Degree Completion Date (Month) (FOR COMPLETED DEGREES) (2017-2018 academic year)
+   grad_day_ay1920    VARCHAR2(2),   -- Degree Completion Date (Day) (FOR COMPLETED DEGREES) (2017-2018 academic year)
+   grad_year_ay1920   VARCHAR2(4),   -- Degree Completion Date (Year) (FOR COMPLETED DEGREES) (2017-2018 academic year)
+   cum_gpa_ay1920     VARCHAR2(10),  -- Cumulative (Unweighted) GPA (2017-2018 academic year)
+   major1_ay1920      VARCHAR2(128), -- First Major (2017-2018 academic year)
+   cip1_ay1920        VARCHAR2(6),   -- First Major CIP Code (NNNNNN) (2017-2018 academic year)
+   major2_ay1920      VARCHAR2(128), -- Second Major (2017-2018 academic year)
+   cip2_ay1920        VARCHAR2(6),   -- Second Major CIP Code (NNNNNN) (2017-2018 academic year)
+   undeclared_ay1920  VARCHAR2(1),   -- Major Undeclared (2017-2018 academic year)
+   prgm_hrs_ay1920    VARCHAR2(10),  -- Total Number of Clock Hours in Program (2017-2018 academic year)
+   hrs_clock_ay1920   VARCHAR2(10),  -- Cumulative Clock Hours Completed (2017-2018 academic year)
+   hrs_credit_ay1920  VARCHAR2(10),  -- Total Number of Credit Hours in Program (2017-2018 academic year)
+   cum_credits_ay1920 VARCHAR2(10),  -- Cumulative Credit Hours Completed (2017-2018 academic year)
+   tuition_ay1920     VARCHAR2(10),  -- TotalTuition and Mandatory Fees Charged ($) (2017-2018 academic year)
+   tuition_covid19_ay1920 VARCHAR2(10), -- Tuition and Fees Refunded for COVID-19 ($) (2019-2020 academic year)
+   rb_covid19_ay1920  VARCHAR2(2),   -- Room and board refunded for COVID-19 (2019-2020 academic year)
+   residency_ay1920   VARCHAR2(2),   -- Residency for Tuition Purposes (2017-2018 academic year)
+
+   enroll_summer_ptft_2019 VARCHAR2(10),  -- Enrollment Status (Summer 2019)
+   enroll_summer_hrs_2019  VARCHAR2(10),  -- Credit Units (Summer 2019)
+   enroll_fall_ptft_2019   VARCHAR2(10),  -- Enrollment Status (Fall 2019)
+   enroll_fall_hrs_2019    VARCHAR2(10),  -- Credit Units (Fall 2019)
+   enroll_spring_ptft_2020 VARCHAR2(10),  -- Enrollment Status (Spring 2020)
+   enroll_spring_hrs_2020  VARCHAR2(10),  -- Credit Units (Spring 2020)
+   enroll_summer_ptft_2020 VARCHAR2(10),  -- Enrollment Status (Summer 2020)
+   enroll_summer_hrs_2020  VARCHAR2(10)   -- Credit Units (Summer 2020)
  );
 
  ------------------------------------------------------------------------------------------------------------
@@ -168,18 +173,18 @@
                 dob_year,
                 gender,
                 ethnicity,
-                major1_ay1718,
-                cip1_ay1718,
-                major2_ay1718,
-                cip2_ay1718,
+                major1_ay1920,
+                cip1_ay1920,
+                major2_ay1920,
+                cip2_ay1920,
                 dsu_hsgrad_dt,
                 hs_completion_year,
                 hs_completion_type,
                 marital_status,
-                undeclared_ay1718,
-                grad_month_ay1718,
-                grad_day_ay1718,
-                grad_year_ay1718
+                undeclared_ay1920,
+                grad_month_ay1920,
+                grad_day_ay1920,
+                grad_year_ay1920
               )
               SELECT '1' AS ipeds_fsvn,
                      '1' AS npsas_eligible,
@@ -220,30 +225,30 @@
                        FROM   shrdgmr
                        WHERE  shrdgmr_pidm       = dsc_pidm
                        AND    shrdgmr_degc_code  = cur_degc1
-                       AND    shrdgmr_acyr_code  = '1718'
+                       AND    shrdgmr_acyr_code  = '1920'
                        AND    shrdgmr_degs_code IN ('AW','PN')
-                     ) AS grad_month_ay1718,
+                     ) AS grad_month_ay1920,
                      (
                        SELECT to_char(shrdgmr_grad_date,'DD')
                        FROM   shrdgmr
                        WHERE  shrdgmr_pidm       = dsc_pidm
                        AND    shrdgmr_degc_code  = cur_degc1
-                       AND    shrdgmr_acyr_code  = '1718'
+                       AND    shrdgmr_acyr_code  = '1920'
                        AND    shrdgmr_degs_code IN ('AW','PN')
-                     ) AS grad_day_ay1718,
+                     ) AS grad_day_ay1920,
                      (
                        SELECT to_char(shrdgmr_grad_date,'YYYY')
                        FROM   shrdgmr
                        WHERE  shrdgmr_pidm       = dsc_pidm
                        AND    shrdgmr_degc_code  = cur_degc1
-                       AND    shrdgmr_acyr_code  = '1718'
+                       AND    shrdgmr_acyr_code  = '1920'
                        AND    shrdgmr_degs_code IN ('AW','PN')
-                     ) AS grad_year_ay1718
+                     ) AS grad_year_ay1920
               FROM   students03@dscir s1, spbpers, spriden
               WHERE  dsc_pidm = spbpers_pidm
               AND    dsc_pidm = spriden_pidm
               AND    s_entry_action <> 'HS'
-              AND    dsc_term_code IN ('20173E','20174E','201823')
+              AND    dsc_term_code IN ('20193E','20194E','202023')
               AND    spriden_change_ind IS NULL
               AND   (spbpers_confid_ind IS NULL OR spbpers_confid_ind <> 'Y')
               AND    dsc_term_code =
@@ -252,51 +257,95 @@
                        FROM   students03@dscir s2
                        WHERE  s2.dsc_pidm = s1.dsc_pidm
                        AND    s2.s_entry_action <> 'HS'
-                       AND    s2.dsc_term_code IN ('20173E','20174E','201823')
+                       AND    s2.dsc_term_code IN ('20193E','20194E','202023')
                      )
-              AND    s_banner_id IN ('00235885','00152735','00364993','00344762','00362000','00369609','00297306','00318349',
-                          '00364133','00336420','00198506','00341176','00327654','00209641','00327043','00285386','00287333',
-                          '00363074','00377936','00390385','00322849','00351977','00377617','00359718','00307133','00353946',
-                          '00294593','00011889','00328695','00282031','00341910','00295845','00239214','00382788','00363861',
-                          '00317996','00324396','00286332','00260565','00377749','00330647','00356468','00175333','00237374',
-                          '00357311','00265120','00227888','00352901','00376895','00304992','00023483','00247500','00305473',
-                          '00099626','00310348','00168549','00037836','00134477','00198697','00195009','00104576','00271356',
-                          '00234623','00045569','00047834','00105542','00339291','00051662','00053335','00353870','00247530',
-                          '00059117','00356781','00375286','00177532','00146553','00062228','00165539','00208318','00089910',
-                          '00173361','00221316','00265044','00219826','00272830','00274800','00377643','00282231','00234676',
-                          '00265490','00297620','00348207','00270324','00336238','00274157','00336731','00331120','00365355',
-                          '00068244','00290823','00218858','00349440','00071142','00327487','00353550','00230271','00205624',
-                          '00351070','00354614','00353293','00375745','00317175','00346434','00337023','00376796','00354756',
-                          '00365774','00376362','00289276','00308416','00286950','00285515','00363736','00309617','00291714',
-                          '00357713','00307842','00352598','00352334','00297387','00275987','00338612','00339388','00257343',
-                          '00333555','00336366','00353881','00287334','00253484','00376785','00337446','00335774','00326768',
-                          '00338477','00256848','00307645','00357142','00335619','00325546','00268952','00357685','00318334',
-                          '00287373','00309695','00309762','00362022','00199119','00369989','00292162','00309750','00333318',
-                          '00379841','00375911','00078785','00272563','00328011','00309390','00306585','00285492','00337646',
-                          '00366409','00260941','00339400','00197365','00189610','00365001','00199790','00380167','00376398',
-                          '00131329','00242251','00366708','00222221','00259085','00253851','00251789','00257149','00285416',
-                          '00236144','00264498','00294391','00275516','00236140','00254737','00285794','00294288','00279739',
-                          '00237496','00234444','00304454','00383963','00358597','00275217','00347090','00365105','00380117',
-                          '00300998','00301180','00340009','00306042','00285840','00296447','00303777','00310511','00307861',
-                          '00320577','00318997','00318648','00322800','00320362','00331028','00306235','00317448','00377662',
-                          '00305129','00329328','00335471','00318809','00375296','00305815','00322462','00332037','00357625',
-                          '00362217','00337590','00352783','00347309','00361914','00359084','00366116','00344414','00348241',
-                          '00343380','00337434','00349129','00346412','00365334','00284431','00354978','00357171','00357508',
-                          '00345107','00341969','00356544','00354689','00364479','00326358','00081601','00282820','00227965',
-                          '00352824','00172725','00083370','00271613','00191198','00216156','00235034','00185552','00324565',
-                          '00239980','00235667','00377680','00228737','00221435','00255938','00256716','00236046','00274409',
-                          '00256660','00317102','00369526','00316366','00330589','00283330','00364261','00286517','00236389',
-                          '00296328','00351090','00273040','00343507','00386332','00290247','00237377','00263549','00278845',
-                          '00364397','00309269','00274598','00274608','00308180','00308752','00309387','00301867','00313409',
-                          '00285761','00320841','00298321','00336800','00208312','00341795','00323456','00269029','00317031',
-                          '00204566','00318909','00377640','00361264','00321965','00324424','00322539','00318880','00348511',
-                          '00318810','00380705','00344567','00342561','00323808','00347452','00346833','00343207','00326863',
-                          '00361302','00326820','00365756','00340267','00351739','00323537','00354285','00352545','00313749',
-                          '00370048','00366159','00349962','00311920','00318373','00357161','00255333','00230922','00311819',
-                          '00311371','00340024','00324653','00324738','00332768','00309112','00369590','00325012','00359484',
-                          '00364424','00354046','00268946','00362814','00349064','00376890','00355355','00359907','00377482',
-                          '00369987','00334329','00353661','00351628','00351716','00324117','00326892'
-                        )
+                and s_banner_id in ('00416112',
+                                    '00415270',
+                                    '00403695',
+                                    '00378082',
+                                    '00413302',
+                                    '00409631',
+                                    '00354854',
+                                    '00404281',
+                                    '00335863',
+                                    '00396744',
+                                    '00386432',
+                                    '00411308',
+                                    '00401068',
+                                    '00273755',
+                                    '00402370',
+                                    '00408834',
+                                    '00415589',
+                                    '00345583',
+                                    '00378193',
+                                    '00414098',
+                                    '00320630',
+                                    '00402816',
+                                    '00379243',
+                                    '00203837',
+                                    '00374340',
+                                    '00413880',
+                                    '00406480',
+                                    '00399547',
+                                    '00376229',
+                                    '00378154',
+                                    '00353297',
+                                    '00398881',
+                                    '00397647',
+                                    '00413806',
+                                    '00396937',
+                                    '00406735',
+                                    '00247531',
+                                    '00411749',
+                                    '00347651',
+                                    '00410873',
+                                    '00415792',
+                                    '00346498',
+                                    '00377251',
+                                    '00276347',
+                                    '00394705',
+                                    '00405451',
+                                    '00394001',
+                                    '00405295',
+                                    '00346860',
+                                    '00309269',
+                                    '00408048',
+                                    '00378084',
+                                    '00403075',
+                                    '00420340',
+                                    '00357045',
+                                    '00416114',
+                                    '00386552',
+                                    '00326471',
+                                    '00399950',
+                                    '00363724',
+                                    '00415675',
+                                    '00411173',
+                                    '00405223',
+                                    '00372374',
+                                    '00409844',
+                                    '00405646',
+                                    '00412816',
+                                    '00394689',
+                                    '00402069',
+                                    '00414136',
+                                    '00413111',
+                                    '00416829',
+                                    '00282917',
+                                    '00248796',
+                                    '00396108',
+                                    '00404936',
+                                    '00395798',
+                                    '00400210',
+                                    '00406259',
+                                    '00315720',
+                                    '00352854',
+                                    '00391205',
+                                    '00402352',
+                                    '00410979',
+                                    '00396816',
+                                    '00325354',
+                                    '00414420')
               GROUP  BY dsc_pidm,
                         dsc_pidm,
                         s_first,
@@ -1510,7 +1559,7 @@
                     )
              GROUP BY dsu_pidm
            ),
-           sat_writ_score =
+           sat_essay_score =
            ( -- SAT Writing
              SELECT MAX(to_number(sortest_test_score))
              FROM   sortest
@@ -1913,7 +1962,7 @@
            act_comp_score,
            sat_read_score,
            sat_math_score,
-           sat_writ_score,
+           sat_essay_score,
            program_ay1718,
            grad_degree_ay1718,
            class_level_ay1718,
