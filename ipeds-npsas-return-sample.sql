@@ -49,15 +49,15 @@
    race_asian         VARCHAR2(2),   -- Race: Asian
    race_indian        VARCHAR2(2),   -- Race: American Indian or Alaska Native
    race_hawaiian      VARCHAR2(2),   -- Race: Native Hawaiian or addtl Pacific Islander
-   perm_add_line1     VARCHAR2(50),  -- Permanent Address Line 1
+   perm_add_line1     VARCHAR2(100),  -- Permanent Address Line 1
    perm_add_line2     VARCHAR2(50),  -- Permanent Address Line 2
    perm_add_city      VARCHAR2(50),  -- Permanent Address City
    perm_add_state     VARCHAR2(2),   -- Permanent Address State
    perm_add_zip       VARCHAR2(9),   -- Permanent Address Zip
    perm_add_country   VARCHAR2(50),  -- Permanent Address Country (if not USA)
    is_perm_resd       VARCHAR2(2),   -- Is the student a permanent resident of the state in which your institution is located?
-   local_add_line1    VARCHAR2(50), -- Local/Most Recent Address Line 1
-   local_add_line2    VARCHAR2(50),  -- Local/Most Recent Address Line 2
+   local_add_line1    VARCHAR2(100), -- Local/Most Recent Address Line 1
+   local_add_line2    VARCHAR2(100),  -- Local/Most Recent Address Line 2
    local_add_city     VARCHAR2(50),  -- Local/Most Recent Address City
    local_add_state    VARCHAR2(2),   -- Local/Most Recent Address State
    local_add_zip      VARCHAR2(9),   -- Local/Most Recent Address Zip
@@ -71,8 +71,8 @@
    parent_middle_name VARCHAR2(50),  -- Parent Middle Name
    parent_last_name   VARCHAR2(50),  -- Parent Last Name
    parent_suffix      VARCHAR2(10),  -- Parent Suffix
-   parent_add_line1   VARCHAR2(50), -- Parent Address Line 1
-   parent_add_line2   VARCHAR2(50),  -- Parent Address Line 2
+   parent_add_line1   VARCHAR2(100), -- Parent Address Line 1
+   parent_add_line2   VARCHAR2(100),  -- Parent Address Line 2
    parent_add_city    VARCHAR2(50),  -- Parent Address City
    parent_add_state   VARCHAR2(2),   -- Parent Address State or Province
    parent_add_zip     VARCHAR2(9),   -- Parent Address Zip
@@ -86,8 +86,8 @@
    other_last_name    VARCHAR2(50),  -- Other Contact Last Name
    other_suffix       VARCHAR2(10),  -- Other Contact Suffix
    other_relation     VARCHAR2(2),   -- Relationship of Other Contact to Student
-   other_add_line1    VARCHAR2(50), -- Other Contact Address Line 1
-   other_add_line2    VARCHAR2(50),  -- Other Contact Address Line 2
+   other_add_line1    VARCHAR2(100), -- Other Contact Address Line 1
+   other_add_line2    VARCHAR2(100),  -- Other Contact Address Line 2
    other_add_city     VARCHAR2(50),  -- Other Contact Address City
    other_add_state    VARCHAR2(2),   -- Other Contact Address State or Province
    other_add_zip      VARCHAR2(9),   -- Other Contact Address Zip
@@ -154,7 +154,7 @@
  ------------------------------------------------------------------------------------------------------------
  -- Add Students
 
-  INSERT INTO enroll.ipeds_npsas_18
+  INSERT INTO enroll.ipeds_npsas_sample_20
               (
                 ipeds_fsvn,
                 npsas_eligible,
@@ -299,7 +299,7 @@
  ------------------------------------------------------------------------------------------------------------
 
  -- Veteran Status
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    veteran_status =
            CASE WHEN EXISTS
            (
@@ -311,17 +311,17 @@
 
  -- Ethnicities
 
-    UPDATE enroll.ipeds_npsas_18 SET race_white    = CASE WHEN ethnicity = 'W' THEN 1 ELSE 0 END;
-    UPDATE enroll.ipeds_npsas_18 SET race_black    = CASE WHEN ethnicity = 'B' THEN 1 ELSE 0 END;
-    UPDATE enroll.ipeds_npsas_18 SET race_asian    = CASE WHEN ethnicity = 'A' THEN 1 ELSE 0 END;
-    UPDATE enroll.ipeds_npsas_18 SET race_indian   = CASE WHEN ethnicity = 'I' THEN 1 ELSE 0 END;
-    UPDATE enroll.ipeds_npsas_18 SET race_hawaiian = CASE WHEN ethnicity = 'P' THEN 1 ELSE 0 END;
-    UPDATE enroll.ipeds_npsas_18 SET ethnicity     = CASE WHEN ethnicity = 'H' THEN 1
+    UPDATE enroll.ipeds_npsas_sample_20 SET race_white    = CASE WHEN ethnicity = 'W' THEN 1 ELSE 0 END;
+    UPDATE enroll.ipeds_npsas_sample_20 SET race_black    = CASE WHEN ethnicity = 'B' THEN 1 ELSE 0 END;
+    UPDATE enroll.ipeds_npsas_sample_20 SET race_asian    = CASE WHEN ethnicity = 'A' THEN 1 ELSE 0 END;
+    UPDATE enroll.ipeds_npsas_sample_20 SET race_indian   = CASE WHEN ethnicity = 'I' THEN 1 ELSE 0 END;
+    UPDATE enroll.ipeds_npsas_sample_20 SET race_hawaiian = CASE WHEN ethnicity = 'P' THEN 1 ELSE 0 END;
+    UPDATE enroll.ipeds_npsas_sample_20 SET ethnicity     = CASE WHEN ethnicity = 'H' THEN 1
                                                           WHEN ethnicity = 'U' THEN -1
                                                                                ELSE  0 END;
 
  -- Permanent Address
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    perm_add_line1 =
            (
              SELECT s1.spraddr_street_line1
@@ -410,7 +410,7 @@
 
 
  -- Student's Local Address, City, State and Zip Code
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    local_add_line1 =
            (
              SELECT s1.spraddr_street_line1
@@ -485,7 +485,7 @@
 
 
  -- Indicator: Is student permanent resident of state of institution
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    is_perm_resd =
            CASE
            (
@@ -507,7 +507,7 @@
            ELSE -1 END;
 
  -- Spouse's Information
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    spouse_first_name =
            (
              SELECT spremrg_first_name
@@ -552,7 +552,7 @@
            );
 
  -- Citizenship Status
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    citizenship_status =
            (
              SELECT CASE spbpers_citz_code
@@ -564,7 +564,7 @@
              WHERE  spbpers_pidm = dsu_pidm
            );
  -- Student's Local Area Code and Phone Number
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone1_number =
            (
              SELECT s1.sprtele_phone_area||s1.sprtele_phone_number
@@ -584,12 +584,12 @@
                     )
            );
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone1_type = '1'
     WHERE  phone1_number IS NOT NULL;
 
  -- Student's Cell Phone Area Code and Phone Number
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone2_number =
            (
              SELECT substr(s1.sprtele_phone_area||s1.sprtele_phone_number,1,10)
@@ -609,12 +609,12 @@
                     )
            );
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone2_type = '2'
     WHERE  phone2_number IS NOT NULL;
 
  -- Student's Work Phone Area Code and Phone Number
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone1_number =
            (
              SELECT substr(s1.sprtele_phone_area||s1.sprtele_phone_number,1,10)
@@ -635,13 +635,13 @@
            )
     WHERE  phone1_number IS NULL;
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone1_type = '3'
     WHERE  phone1_number IS NOT NULL
     AND    phone1_type IS NULL;
 
  -- Student's Other Phone Area Code and Phone Number
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone1_number =
            (
              SELECT substr(s1.sprtele_phone_area||s1.sprtele_phone_number,1,10)
@@ -660,13 +660,13 @@
            )
     WHERE  phone1_number IS NULL;
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    phone1_type = '4'
     WHERE  phone1_number IS NOT NULL
     AND    phone1_type IS NULL;
 
  -- Student's Campus Email Address
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    email_campus =
            (
              SELECT goremal_email_address
@@ -675,7 +675,7 @@
            );
 
  -- Student's Personal Email Address
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    email_personal =
            (
              SELECT goremal_email_address
@@ -684,7 +684,7 @@
            );
 
  -- Parent's Information
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    parent_first_name =
            (
              SELECT spremrg_first_name
@@ -836,7 +836,7 @@
              AND    ROWNUM = 1
            );
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    parent_first_name =
            (
              SELECT sorfolk_parent_first
@@ -868,7 +868,7 @@
 
  -- Other Contact's Information
  -- Excludes spouse and parent information since it's already been provided.
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    other_first_name =
            (
              SELECT spremrg_first_name
@@ -1057,7 +1057,7 @@
            );
 
  -- Date of First Enrollment
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    first_enrl_month = nvl(
            (
              SELECT to_char(stvterm_start_date,'MM')
@@ -1150,7 +1150,7 @@
 
 
  -- Date of First Enrollment
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    first_enrl_month =
            (
              SELECT to_char(stvterm_start_date,'MM')
@@ -1195,7 +1195,7 @@
     OR     first_enrl_year  IS NULL;
 
  -- Date of Last Enrollment
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    last_enrl_month =
            (
              SELECT to_char(stvterm_end_date,'MM')
@@ -1236,7 +1236,7 @@
                     )
            );
  -- Transfer Credits Indicator
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    has_xfer_hours =
            CASE WHEN EXISTS
            (
@@ -1248,7 +1248,7 @@
 
 
  -- Remedial Credits Indicator
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    has_rem_dev_hours =
            CASE WHEN EXISTS
            (
@@ -1266,7 +1266,7 @@
 
 
  -- First-time Student
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    is_first_time_stu =
            CASE WHEN EXISTS
            (
@@ -1280,7 +1280,7 @@
 
 
  -- Bachelor's Degree Information
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    has_bach_degree =
            CASE WHEN EXISTS
            (
@@ -1347,7 +1347,7 @@
            );
 
  -- ACT Test Scores: ----------------------------------------------------------------------------------------
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    act_engl_score =
            ( -- ACT English
              SELECT MAX(to_number(sortest_test_score))
@@ -1440,7 +1440,7 @@
            );
 
  -- SAT Test Scores:
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    sat_read_score =
            ( -- SAT Reading
              SELECT MAX(to_number(sortest_test_score))
@@ -1495,8 +1495,8 @@
 
 
  -- Program
-    UPDATE enroll.ipeds_npsas_18
-    SET    program_ay1718 =
+    UPDATE enroll.ipeds_npsas_sample_20
+    SET    program_ay1920 =
            (
              SELECT CASE substr(s1.cur_degc1,1,1)
                          WHEN 'B' THEN '4'
@@ -1516,8 +1516,8 @@
            );
 
  -- Class Level
-    UPDATE enroll.ipeds_npsas_18
-    SET    class_level_ay1718 =
+    UPDATE enroll.ipeds_npsas_sample_20
+    SET    class_level_ay1920 =
            (
              SELECT CASE s1.s_level
                          WHEN 'FR' THEN '1'
@@ -1538,8 +1538,8 @@
            );
 
  -- Graduation Date (if graduated)
-    UPDATE enroll.ipeds_npsas_18
-    SET    grad_month_ay1718 =
+    UPDATE enroll.ipeds_npsas_sample_20
+    SET    grad_month_ay1920 =
            (
              SELECT to_char(shrdgmr_grad_date,'MM')
              FROM   shrdgmr
@@ -1548,7 +1548,7 @@
              AND    shrdgmr_degs_code IN ('AW','PN')
              AND    shrdgmr_acyr_code = '1718'
            ),
-           grad_day_ay1718 =
+           grad_day_ay1920 =
            (
              SELECT to_char(shrdgmr_grad_date,'DD')
              FROM   shrdgmr
@@ -1557,7 +1557,7 @@
              AND    shrdgmr_degs_code IN ('AW','PN')
              AND    shrdgmr_acyr_code = '1718'
            ),
-           grad_year_ay1718 =
+           grad_year_ay1920 =
            (
              SELECT to_char(shrdgmr_grad_date,'YYYY')
              FROM   shrdgmr
@@ -1568,8 +1568,8 @@
            );
 
  -- Cumulative GPA
-    UPDATE enroll.ipeds_npsas_18
-    SET    cum_gpa_ay1718 =
+    UPDATE enroll.ipeds_npsas_sample_20
+    SET    cum_gpa_ay1920 =
            (
              SELECT s1.s_cum_gpa_ugrad
              FROM   students03@dscir s1
@@ -1585,7 +1585,7 @@
            );
 
  -- Current Major 1
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    major1_ay1718 =
            (
              SELECT stvmajr_desc
@@ -1603,7 +1603,7 @@
            );
 
  -- Current Major CIP Code 1
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    cip1_ay1718 =
            (
              SELECT s1.s_curr_cip
@@ -1620,7 +1620,7 @@
            );
 
  -- Current Major 2
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    major2_ay1718 =
            (
              SELECT stvmajr_desc
@@ -1638,7 +1638,7 @@
            );
 
  -- Current Major CIP Code 2
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    cip2_ay1718 =
            (
              SELECT s1.s_curr_cip2
@@ -1656,7 +1656,7 @@
            );
 
  -- Current Major CIP Code 2
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    cum_credits_ay1718 =
            (
              SELECT s1.s_cum_hrs_ugrad
@@ -1673,7 +1673,7 @@
            );
 
  -- Charged Tuition Fees:
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    tuition_ay1718 =
            (
              SELECT sum(tbraccd_amount)
@@ -1684,7 +1684,7 @@
            );
 
  -- Tuition Residency:
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    residency_ay1718 = CASE
            (
              SELECT sgbstdn_resd_code
@@ -1714,7 +1714,7 @@
 
 
  -- Enrollments
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    enroll_summer_ptft =
            (
              SELECT s_pt_ft
@@ -1730,7 +1730,7 @@
              AND    dsc_term_code = '20173E'
            );
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    enroll_fall_ptft =
            (
              SELECT s_pt_ft
@@ -1746,7 +1746,7 @@
              AND    dsc_term_code = '20174E'
            );
 
-    UPDATE enroll.ipeds_npsas_18
+    UPDATE enroll.ipeds_npsas_sample_20
     SET    enroll_spring_ptft =
            (
              SELECT s_pt_ft
@@ -1844,7 +1844,7 @@
            other_email,
            other_phone,
            other_cell
-    FROM   enroll.ipeds_npsas_18;
+    FROM   enroll.ipeds_npsas_sample_20;
 
  -- Enrollment
 
@@ -1901,7 +1901,7 @@
            enroll_fall_hrs,
            enroll_spring_ptft,
            enroll_spring_hrs
-    FROM   enroll.ipeds_npsas_18;
+    FROM   enroll.ipeds_npsas_sample_20;
 
  --------------------------------------------------------------------------------------------------------
  --------------------------------------------------------------------------------------------------------
