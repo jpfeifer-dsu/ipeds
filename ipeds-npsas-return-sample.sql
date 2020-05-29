@@ -1490,9 +1490,10 @@
              GROUP BY dsu_pidm
            );
 
- -- AY 2016-2017 --------------------------------------------------------------------------------------------
-
-
+select sat_read_score,
+       sat_math_score,
+       sat_essay_score
+from enroll.ipeds_npsas_sample_20;
 
  -- Program
     UPDATE enroll.ipeds_npsas_sample_20
@@ -1574,118 +1575,118 @@
              SELECT s1.s_cum_gpa_ugrad
              FROM   students03@dscir s1
              WHERE  s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
            );
 
  -- Current Major 1
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    major1_ay1718 =
+    SET    major1_ay1920 =
            (
              SELECT stvmajr_desc
              FROM   students03@dscir s1, stvmajr
              WHERE  s1.cur_majr1 = stvmajr_code
              AND    s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
            );
 
  -- Current Major CIP Code 1
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    cip1_ay1718 =
+    SET    cip1_ay1920 =
            (
              SELECT s1.s_curr_cip
              FROM   students03@dscir s1
              WHERE  s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
            );
 
  -- Current Major 2
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    major2_ay1718 =
+    SET    major2_ay1920 =
            (
              SELECT stvmajr_desc
              FROM   students03@dscir s1, stvmajr
              WHERE  s1.cur_majr2 = stvmajr_code
              AND    s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
            );
 
  -- Current Major CIP Code 2
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    cip2_ay1718 =
+    SET    cip2_ay1920 =
            (
              SELECT s1.s_curr_cip2
              FROM   students03@dscir s1
              WHERE  s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
              AND    s1.s_curr_cip2 <> ' '
            );
 
  -- Current Major CIP Code 2
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    cum_credits_ay1718 =
+    SET    cum_credits_ay1920 =
            (
              SELECT s1.s_cum_hrs_ugrad
              FROM   students03@dscir s1
              WHERE  s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
            );
 
  -- Charged Tuition Fees:
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    tuition_ay1718 =
+    SET    tuition_ay1920 =
            (
              SELECT sum(tbraccd_amount)
              FROM   tbraccd
              WHERE  tbraccd_pidm = dsu_pidm
-             AND    tbraccd_term_code IN ('201730','201740','201820')
+             AND    tbraccd_term_code IN ('201930','201940','202020')
              AND    tbraccd_detail_code < '2101'
            );
 
  -- Tuition Residency:
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    residency_ay1718 = CASE
+    SET    residency_ay1920 = CASE
            (
              SELECT sgbstdn_resd_code
              FROM   sgbstdn
@@ -1715,51 +1716,67 @@
 
  -- Enrollments
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    enroll_summer_ptft =
+    SET    enroll_summer_ptft_2019 =
            (
              SELECT s_pt_ft
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20173E'
+             AND    dsc_term_code = '20193E'
            ),
-           enroll_summer_hrs =
+           enroll_summer_hrs_2019 =
            (
              SELECT s_term_att_cr
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20173E'
+             AND    dsc_term_code = '20193E'
            );
 
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    enroll_fall_ptft =
+    SET    enroll_fall_ptft_2019 =
            (
              SELECT s_pt_ft
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20174E'
+             AND    dsc_term_code = '20194E'
            ),
-           enroll_fall_hrs =
+           enroll_fall_hrs_2019 =
            (
              SELECT s_term_att_cr
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20174E'
+             AND    dsc_term_code = '20194E'
            );
 
     UPDATE enroll.ipeds_npsas_sample_20
-    SET    enroll_spring_ptft =
+    SET    enroll_spring_ptft_2020 =
            (
              SELECT s_pt_ft
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20182E'
+             AND    dsc_term_code = '20192E'
            ),
-           enroll_spring_hrs =
+           enroll_spring_hrs_2020 =
            (
              SELECT s_term_att_cr
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20182E'
+             AND    dsc_term_code = '20192E'
+           );
+
+UPDATE enroll.ipeds_npsas_sample_20
+    SET    enroll_summer_ptft_2020 =
+           (
+             SELECT s_pt_ft
+             FROM   students03@dscir
+             WHERE  dsc_pidm = dsu_pidm
+             AND    dsc_term_code = '20202E'
+           ),
+           enroll_spring_hrs_2020 =
+           (
+             SELECT s_term_att_cr
+             FROM   students03@dscir
+             WHERE  dsc_pidm = dsu_pidm
+             AND    dsc_term_code = '20202E'
            );
 
  ------------------------------------------------------------------------------------------------------------
@@ -1861,7 +1878,7 @@
            last_enrl_month,
            last_enrl_day,
            last_enrl_year,
-           degree_by_063018,
+           degree_by_063020,
            has_xfer_hours,
            has_rem_dev_hours,
            is_first_time_stu,
@@ -1877,30 +1894,30 @@
            sat_read_score,
            sat_math_score,
            sat_essay_score,
-           program_ay1718,
-           grad_degree_ay1718,
-           class_level_ay1718,
-           grad_month_ay1718,
-           grad_day_ay1718,
-           grad_year_ay1718,
-           cum_gpa_ay1718,
-           major1_ay1718,
-           cip1_ay1718,
-           major2_ay1718,
-           cip2_ay1718,
-           undeclared_ay1718,
-           prgm_hrs_ay1718,
-           hrs_clock_ay1718,
-           hrs_credit_ay1718,
-           cum_credits_ay1718,
-           tuition_ay1718,
-           residency_ay1718,
-           enroll_summer_ptft,
-           enroll_summer_hrs,
-           enroll_fall_ptft,
-           enroll_fall_hrs,
-           enroll_spring_ptft,
-           enroll_spring_hrs
+           program_ay1920,
+           grad_degree_ay1920,
+           class_level_ay1920,
+           grad_month_ay1920,
+           grad_day_ay1920,
+           grad_year_ay1920,
+           cum_gpa_ay1920,
+           major1_ay1920,
+           cip1_ay1920,
+           major2_ay1920,
+           cip2_ay1920,
+           undeclared_ay1920,
+           prgm_hrs_ay1920,
+           hrs_clock_ay1920,
+           hrs_credit_ay1920,
+           cum_credits_ay1920,
+           tuition_ay1920,
+           residency_ay1920,
+           enroll_summer_ptft_2019,
+           enroll_summer_hrs_2019,
+           enroll_fall_ptft_2019,
+           enroll_fall_hrs_2019,
+           enroll_spring_ptft_2020,
+           enroll_spring_hrs_2020
     FROM   enroll.ipeds_npsas_sample_20;
 
  --------------------------------------------------------------------------------------------------------
