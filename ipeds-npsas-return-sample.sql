@@ -120,26 +120,26 @@
    sat_math_score     VARCHAR2(4),   -- SAT Mathematics Score
    sat_essay_score    VARCHAR2(4),   -- SAT Essay Score
 
-   program_ay1920     VARCHAR2(2),   -- Program/Degree (2017-2018 academic year)
-   grad_degree_ay1920 VARCHAR2(2),   -- Graduate Degree Type (FOR GRADUATE DEGREES ONLY) (2017-2018 academic year)
-   class_level_ay1920 VARCHAR2(2),   -- Class Level (2017-2018 academic year)
-   grad_month_ay1920  VARCHAR2(2),   -- Degree Completion Date (Month) (FOR COMPLETED DEGREES) (2017-2018 academic year)
-   grad_day_ay1920    VARCHAR2(2),   -- Degree Completion Date (Day) (FOR COMPLETED DEGREES) (2017-2018 academic year)
-   grad_year_ay1920   VARCHAR2(4),   -- Degree Completion Date (Year) (FOR COMPLETED DEGREES) (2017-2018 academic year)
-   cum_gpa_ay1920     VARCHAR2(10),  -- Cumulative (Unweighted) GPA (2017-2018 academic year)
-   major1_ay1920      VARCHAR2(128), -- First Major (2017-2018 academic year)
-   cip1_ay1920        VARCHAR2(6),   -- First Major CIP Code (NNNNNN) (2017-2018 academic year)
-   major2_ay1920      VARCHAR2(128), -- Second Major (2017-2018 academic year)
-   cip2_ay1920        VARCHAR2(6),   -- Second Major CIP Code (NNNNNN) (2017-2018 academic year)
-   undeclared_ay1920  VARCHAR2(1),   -- Major Undeclared (2017-2018 academic year)
-   prgm_hrs_ay1920    VARCHAR2(10),  -- Total Number of Clock Hours in Program (2017-2018 academic year)
-   hrs_clock_ay1920   VARCHAR2(10),  -- Cumulative Clock Hours Completed (2017-2018 academic year)
-   hrs_credit_ay1920  VARCHAR2(10),  -- Total Number of Credit Hours in Program (2017-2018 academic year)
-   cum_credits_ay1920 VARCHAR2(10),  -- Cumulative Credit Hours Completed (2017-2018 academic year)
-   tuition_ay1920     VARCHAR2(10),  -- TotalTuition and Mandatory Fees Charged ($) (2017-2018 academic year)
+   program_ay1920     VARCHAR2(2),   -- Program/Degree (2019-2020 academic year)
+   grad_degree_ay1920 VARCHAR2(2),   -- Graduate Degree Type (FOR GRADUATE DEGREES ONLY) (2019-2020 academic year)
+   class_level_ay1920 VARCHAR2(2),   -- Class Level (2019-2020 academic year)
+   grad_month_ay1920  VARCHAR2(2),   -- Degree Completion Date (Month) (FOR COMPLETED DEGREES) (2019-2020 academic year)
+   grad_day_ay1920    VARCHAR2(2),   -- Degree Completion Date (Day) (FOR COMPLETED DEGREES) (2019-2020 academic year)
+   grad_year_ay1920   VARCHAR2(4),   -- Degree Completion Date (Year) (FOR COMPLETED DEGREES) (2019-2020 academic year)
+   cum_gpa_ay1920     VARCHAR2(10),  -- Cumulative (Unweighted) GPA (2019-2020 academic year)
+   major1_ay1920      VARCHAR2(128), -- First Major (2019-2020 academic year)
+   cip1_ay1920        VARCHAR2(6),   -- First Major CIP Code (NNNNNN) (2019-2020 academic year)
+   major2_ay1920      VARCHAR2(128), -- Second Major (2019-2020 academic year)
+   cip2_ay1920        VARCHAR2(6),   -- Second Major CIP Code (NNNNNN) (2019-2020 academic year)
+   undeclared_ay1920  VARCHAR2(1),   -- Major Undeclared (2019-2020 academic year)
+   prgm_hrs_ay1920    VARCHAR2(10),  -- Total Number of Clock Hours in Program (2019-2020 academic year)
+   hrs_clock_ay1920   VARCHAR2(10),  -- Cumulative Clock Hours Completed (2019-2020 academic year)
+   hrs_credit_ay1920  VARCHAR2(10),  -- Total Number of Credit Hours in Program (2019-2020 academic year)
+   cum_credits_ay1920 VARCHAR2(10),  -- Cumulative Credit Hours Completed (2019-2020 academic year)
+   tuition_ay1920     VARCHAR2(10),  -- TotalTuition and Mandatory Fees Charged ($) (2019-2020 academic year)
    tuition_covid19_ay1920 VARCHAR2(10), -- Tuition and Fees Refunded for COVID-19 ($) (2019-2020 academic year)
    rb_covid19_ay1920  VARCHAR2(2),   -- Room and board refunded for COVID-19 (2019-2020 academic year)
-   residency_ay1920   VARCHAR2(2),   -- Residency for Tuition Purposes (2017-2018 academic year)
+   residency_ay1920   VARCHAR2(2),   -- Residency for Tuition Purposes (2019-2020 academic year)
 
    enroll_summer_ptft_2019 VARCHAR2(10),  -- Enrollment Status (Summer 2019)
    enroll_summer_hrs_2019  VARCHAR2(10),  -- Credit Units (Summer 2019)
@@ -186,6 +186,7 @@
                 grad_day_ay1920,
                 grad_year_ay1920
               )
+
               SELECT '1' AS ipeds_fsvn,
                      '1' AS npsas_eligible,
                      s2.study_id as ipeds_studyid,
@@ -219,7 +220,7 @@
                             WHEN 'S' THEN 0
                             WHEN 'M' THEN 1
                             ELSE         -1 END,
-                     CASE WHEN cur_majr1 IN ('ND','CE','GE') THEN 1 ELSE 0 END AS undeclared_ay1718,
+                     CASE WHEN cur_majr1 IN ('ND','CE','GE') THEN 1 ELSE 0 END AS undeclared_ay1920,
                      (
                        SELECT to_char(shrdgmr_grad_date,'MM')
                        FROM   shrdgmr
@@ -308,9 +309,7 @@
              WHERE  sgrvetn_pidm = dsu_pidm
            ) THEN 1 ELSE 0 END;
 
-
  -- Ethnicities
-
     UPDATE enroll.ipeds_npsas_sample_20 SET race_white    = CASE WHEN ethnicity = 'W' THEN 1 ELSE 0 END;
     UPDATE enroll.ipeds_npsas_sample_20 SET race_black    = CASE WHEN ethnicity = 'B' THEN 1 ELSE 0 END;
     UPDATE enroll.ipeds_npsas_sample_20 SET race_asian    = CASE WHEN ethnicity = 'A' THEN 1 ELSE 0 END;
@@ -407,8 +406,6 @@
                     )
            );
 
-
-
  -- Student's Local Address, City, State and Zip Code
     UPDATE enroll.ipeds_npsas_sample_20
     SET    local_add_line1 =
@@ -482,7 +479,6 @@
                       AND    s2.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)
                     )
            );
-
 
  -- Indicator: Is student permanent resident of state of institution
     UPDATE enroll.ipeds_npsas_sample_20
@@ -1473,22 +1469,7 @@
                     )
              GROUP BY dsu_pidm
            ),
-           sat_essay_score =
-           ( -- SAT Writing
-             SELECT MAX(to_number(sortest_test_score))
-             FROM   sortest
-             WHERE  sortest_pidm = dsu_pidm
-             AND    sortest_tesc_code IN ('S07')
-             AND    sortest_test_date =
-                    (
-                      SELECT MAX(sortest_test_date)
-                      FROM   sortest
-                      WHERE  sortest_pidm = dsu_pidm
-                      AND    sortest_tesc_code IN ('S07')
-                      GROUP  BY sortest_pidm
-                    )
-             GROUP BY dsu_pidm
-           );
+           sat_essay_score = null; --setting to null due to the essay not being required by admissions
 
  -- Program
     UPDATE enroll.ipeds_npsas_sample_20
@@ -1501,13 +1482,33 @@
                          ELSE          '1' END
              FROM   students03@dscir s1
              WHERE  s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
+                    )
+           );
+
+-- Graduate Degree
+    UPDATE enroll.ipeds_npsas_sample_20
+        SET    grad_degree_ay1920 =
+        (
+            SELECT CASE
+                     WHEN s1.cur_degc1 = 'MMFT' THEN '1'
+                     WHEN s1.cur_degc1 like 'MA%' THEN '2'
+                     ELSE          null END
+            FROM students03@dscir s1
+            WHERE  s1.dsc_pidm = dsu_pidm
+             AND    s1.s_year = '2020'
+             AND    s1.dsc_term_code =
+                    (
+                      SELECT MAX(s2.dsc_term_code)
+                      FROM   students03@dscir s2
+                      WHERE  s2.dsc_pidm = dsu_pidm
+                      AND    s2.s_year = '2020'
                     )
            );
 
@@ -1523,13 +1524,13 @@
                          ELSE           '5' END
              FROM   students03@dscir s1
              WHERE  s1.dsc_pidm = dsu_pidm
-             AND    s1.s_year = '2018'
+             AND    s1.s_year = '2020'
              AND    s1.dsc_term_code =
                     (
                       SELECT MAX(s2.dsc_term_code)
                       FROM   students03@dscir s2
                       WHERE  s2.dsc_pidm = dsu_pidm
-                      AND    s2.s_year = '2018'
+                      AND    s2.s_year = '2020'
                     )
            );
 
@@ -1542,7 +1543,7 @@
              WHERE  shrdgmr_pidm = dsu_pidm
              AND    shrdgmr_degc_code NOT LIKE 'C%'
              AND    shrdgmr_degs_code IN ('AW','PN')
-             AND    shrdgmr_acyr_code = '1718'
+             AND    shrdgmr_acyr_code = '1920'
            ),
            grad_day_ay1920 =
            (
@@ -1551,7 +1552,7 @@
              WHERE  shrdgmr_pidm = dsu_pidm
              AND    shrdgmr_degc_code NOT LIKE 'C%'
              AND    shrdgmr_degs_code IN ('AW','PN')
-             AND    shrdgmr_acyr_code = '1718'
+             AND    shrdgmr_acyr_code = '1920'
            ),
            grad_year_ay1920 =
            (
@@ -1560,7 +1561,7 @@
              WHERE  shrdgmr_pidm = dsu_pidm
              AND    shrdgmr_degc_code NOT LIKE 'C%'
              AND    shrdgmr_degs_code IN ('AW','PN')
-             AND    shrdgmr_acyr_code = '1718'
+             AND    shrdgmr_acyr_code = '1920'
            );
 
  -- Cumulative GPA
@@ -1678,9 +1679,6 @@
              AND    tbraccd_term_code IN ('201930','201940','202020')
              AND    tbraccd_detail_code < '2101'
            );
-select *
-from spriden where spriden_id in ('00414420','00405295');
-
 
  -- Tuition Residency:
     UPDATE enroll.ipeds_npsas_sample_20
@@ -1751,14 +1749,14 @@ from spriden where spriden_id in ('00414420','00405295');
              SELECT s_pt_ft
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20192E'
+             AND    dsc_term_code = '20202E'
            ),
            enroll_spring_hrs_2020 =
            (
              SELECT s_term_att_cr
              FROM   students03@dscir
              WHERE  dsc_pidm = dsu_pidm
-             AND    dsc_term_code = '20192E'
+             AND    dsc_term_code = '20202E'
            );
 
 UPDATE enroll.ipeds_npsas_sample_20
@@ -1795,7 +1793,7 @@ UPDATE enroll.ipeds_npsas_sample_20
            dob_month,
            dob_day,
            dob_year,
-           gender,
+           gender as sex,
            npsas_eligible,
            ineligible_reason,
            marital_status,
@@ -1867,9 +1865,9 @@ UPDATE enroll.ipeds_npsas_sample_20
            ipeds_instid,
            ipeds_studyid,
            ipeds_studentid,
-           first_name,
-           middle_name,
-           last_name,
+--            first_name,
+--            middle_name,
+--            last_name,
            first_enrl_month,
            first_enrl_day,
            first_enrl_year,
@@ -1909,6 +1907,8 @@ UPDATE enroll.ipeds_npsas_sample_20
            hrs_credit_ay1920,
            cum_credits_ay1920,
            tuition_ay1920,
+           tuition_covid19_ay1920,
+           rb_covid19_ay1920,
            residency_ay1920,
            enroll_summer_ptft_2019,
            enroll_summer_hrs_2019,
