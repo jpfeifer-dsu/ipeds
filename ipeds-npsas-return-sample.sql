@@ -1446,13 +1446,13 @@
              SELECT MAX(to_number(sortest_test_score))
              FROM   sortest
              WHERE  sortest_pidm = dsu_pidm
-             AND    sortest_tesc_code IN ('S01')
+             AND    sortest_tesc_code IN ('S11')
              AND    sortest_test_date =
                     (
                       SELECT MAX(sortest_test_date)
                       FROM   sortest
                       WHERE  sortest_pidm = dsu_pidm
-                      AND    sortest_tesc_code IN ('S01')
+                      AND    sortest_tesc_code IN ('S11')
                       GROUP  BY sortest_pidm
                     )
              GROUP BY dsu_pidm
@@ -1462,13 +1462,13 @@
              SELECT MAX(to_number(sortest_test_score))
              FROM   sortest
              WHERE  sortest_pidm = dsu_pidm
-             AND    sortest_tesc_code IN ('S02','S02N')
+             AND    sortest_tesc_code IN ('S12','S12N')
              AND    sortest_test_date =
                     (
                       SELECT MAX(sortest_test_date)
                       FROM   sortest
                       WHERE  sortest_pidm = dsu_pidm
-                      AND    sortest_tesc_code IN ('S02','S02N')
+                      AND    sortest_tesc_code IN ('S12','S12N')
                       GROUP  BY sortest_pidm
                     )
              GROUP BY dsu_pidm
@@ -1489,11 +1489,6 @@
                     )
              GROUP BY dsu_pidm
            );
-
-select sat_read_score,
-       sat_math_score,
-       sat_essay_score
-from enroll.ipeds_npsas_sample_20;
 
  -- Program
     UPDATE enroll.ipeds_npsas_sample_20
@@ -1683,6 +1678,9 @@ from enroll.ipeds_npsas_sample_20;
              AND    tbraccd_term_code IN ('201930','201940','202020')
              AND    tbraccd_detail_code < '2101'
            );
+select *
+from spriden where spriden_id in ('00414420','00405295');
+
 
  -- Tuition Residency:
     UPDATE enroll.ipeds_npsas_sample_20
@@ -1917,7 +1915,9 @@ UPDATE enroll.ipeds_npsas_sample_20
            enroll_fall_ptft_2019,
            enroll_fall_hrs_2019,
            enroll_spring_ptft_2020,
-           enroll_spring_hrs_2020
+           enroll_spring_hrs_2020,
+           enroll_summer_ptft_2020,
+           enroll_summer_hrs_2020
     FROM   enroll.ipeds_npsas_sample_20;
 
  --------------------------------------------------------------------------------------------------------
