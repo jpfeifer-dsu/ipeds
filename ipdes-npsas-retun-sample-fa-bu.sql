@@ -1,12 +1,11 @@
-
-
 with student_list as (select pidm,
                              banner_id,
-                             s2.study_id,
+                             study_id,
                              dsc_term_code,
                              first_name,
                              middle_name,
                              last_name,
+                             null as budget_full_year,
                              1 as registered,
                              budget_period,
                              student_residence,
@@ -116,6 +115,7 @@ with student_list as (select pidm,
                       from (select distinct
                                    spriden_pidm as pidm,
                                    spriden_id as banner_id,
+                                   s2.study_id,
                                    dsc_term_code as dsc_term_code,
                                    spriden_last_name as last_name,
                                    spriden_first_name as first_name,
@@ -145,6 +145,7 @@ with student_list as (select pidm,
                                                    12, '2', -- Full-Time, One Term
                                                    '1') -- Full-Time, One Term
                                    end as budget_period,
+
                                    nvl((select decode(rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1')
                                         from rcrapp1
                                         where rcrapp1_pidm = spriden_pidm
@@ -268,37 +269,37 @@ with student_list as (select pidm,
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code = 'FPELL'
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as pell_grant,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as pell_grant,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code = 'DIRECT'
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as direct,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as direct,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code = 'DUSUB'
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as unsubsidized,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as unsubsidized,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code = 'DPLUS'
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as plus,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as plus,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code = 'FPERK'
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as perkins,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as perkins,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code in ('FSEOG', 'FSEOGS')
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as seog,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as seog,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
                                       and rpratrm_fund_code in ('FCWS', 'FCWSA')
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as work_study,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as work_study,
                                    '' -- this isn't a required item and likely requires a lot of additional work to obtain. Leaving blank due to time constraints
                                        as veteran,
                                    (select rtrim(REGEXP_REPLACE((LISTAGG(rfrbase_fund_code, '`')
@@ -308,7 +309,7 @@ with student_list as (select pidm,
                                          rfrbase
                                     where rpratrm_pidm = spriden_pidm
                                       and rfrbase_fund_code = rpratrm_fund_code
-                                      and rpratrm_period in ('20193E', '20194E', '202023')
+                                      and rpratrm_period in ('201930', '201940', '202020')
                                       and rfrbase_fsrc_code = 'STAT') as state_programs,
                                    nvl((select count(distinct rfrbase_fund_code)
                                         from rpratrm,
@@ -316,7 +317,7 @@ with student_list as (select pidm,
                                         where rpratrm_pidm = spriden_pidm
                                           and rfrbase_fund_code = rpratrm_fund_code
                                           and rfrbase_fsrc_code = 'STAT'
-                                          and rpratrm_period in ('20193E', '20194E', '202023')), 0) as state_count,
+                                          and rpratrm_period in ('201930', '201940', '202020')), 0) as state_count,
                                    (select rtrim(REGEXP_REPLACE((LISTAGG(rfrbase_fund_code, '`')
                                                                          within group (order by rfrbase_fund_code)),
                                                                 '([^`]*)(`\1)+($|`)', '\1\3'), '`')
@@ -324,7 +325,7 @@ with student_list as (select pidm,
                                          rfrbase
                                     where rpratrm_pidm = spriden_pidm
                                       and rfrbase_fund_code = rpratrm_fund_code
-                                      and rpratrm_period in ('20193E', '20194E', '202023')
+                                      and rpratrm_period in ('201930', '201940', '202020')
                                       and rfrbase_fsrc_code in ('INST', 'PRES')) as institution_programs,
                                    nvl((select count(distinct rfrbase_fund_code)
                                         from rpratrm,
@@ -332,7 +333,7 @@ with student_list as (select pidm,
                                         where rpratrm_pidm = spriden_pidm
                                           and rfrbase_fund_code = rpratrm_fund_code
                                           and rfrbase_fsrc_code in ('INST', 'PRES')
-                                          and rpratrm_period in ('20193E', '20194E', '202023')),
+                                          and rpratrm_period in ('201930', '201940', '202020')),
                                        0) as institution_count,
                                    (select rtrim(REGEXP_REPLACE((LISTAGG(rfrbase_fund_code, '`')
                                                                          within group (order by rfrbase_fund_code)),
@@ -342,14 +343,14 @@ with student_list as (select pidm,
                                     where rpratrm_pidm = spriden_pidm
                                       and rfrbase_fund_code = rpratrm_fund_code
                                       and rfrbase_fsrc_code = 'PRIV'
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as private_programs,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as private_programs,
                                    nvl((select count(distinct rfrbase_fund_code)
                                         from rpratrm,
                                              rfrbase
                                         where rpratrm_pidm = spriden_pidm
                                           and rfrbase_fund_code = rpratrm_fund_code
                                           and rfrbase_fsrc_code = 'PRIV'
-                                          and rpratrm_period in ('20193E', '20194E', '202023')), 0) as private_count,
+                                          and rpratrm_period in ('201930', '201940', '202020')), 0) as private_count,
                                    (select rtrim(REGEXP_REPLACE((LISTAGG(rfrbase_fund_code, '`')
                                                                          within group (order by rfrbase_fund_code)),
                                                                 '([^`]*)(`\1)+($|`)', '\1\3'), '`')
@@ -358,19 +359,19 @@ with student_list as (select pidm,
                                     where rpratrm_pidm = spriden_pidm
                                       and rfrbase_fund_code = rpratrm_fund_code
                                       and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-                                      and rpratrm_period in ('20193E', '20194E', '202023')) as other_programs,
+                                      and rpratrm_period in ('201930', '201940', '202020')) as other_programs,
                                    nvl((select count(distinct rfrbase_fund_code)
                                         from rpratrm,
                                              rfrbase
                                         where rpratrm_pidm = spriden_pidm
                                           and rfrbase_fund_code = rpratrm_fund_code
                                           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-                                          and rpratrm_period in ('20193E', '20194E', '202023')), 0) as other_count,
+                                          and rpratrm_period in ('201930', '201940', '202020')), 0) as other_count,
                                    row_number() over (partition by dsc_pidm order by dsc_term_code desc) as rn
                             from students03@dscir,
                                  spbpers,
                                  spriden
-                            inner join ipeds_npsas_sample_data_2020@dscir s2 on '00' || student_id = spriden_id  -- imported table with sampled students
+                                 inner join ipeds_npsas_sample_data_2020@dscir s2 on '00' || student_id = spriden_id -- imported table with sampled students
                             where dsc_pidm = spbpers_pidm
                               and dsc_pidm = spriden_pidm
                               and s_entry_action <> 'HS'
@@ -378,36 +379,50 @@ with student_list as (select pidm,
                               and spriden_change_ind is null
                               and (spbpers_confid_ind is null or spbpers_confid_ind <> 'Y')
                             order by spriden_last_name, spriden_first_name))
+
+--Budget
+-- select 1 as file_spec_ver_num,
+--        '230171' as institute_id,
+--        study_id,
+--        banner_id as student_id,
+--        first_name,
+--        middle_name,
+--        last_name,
+--        budget_period,
+--        budget_full_year,
+--        student_residence,
+--        tuition_and_fees,
+--        books_and_supplies,
+--        room_and_board,
+--        health_insurance,
+--        transportation,
+--        computer_and_tech,
+--        all_other,
+--        budget_total
+-- from student_list
+-- where rn = 1;
+
+--Financial Aid
 select 1 as file_spec_ver_num,
        '230171' as institute_id,
-       '=VLOOKUP([@[Student-ID]],Table19[#All],2,FALSE)' as study_id,
+       study_id,
        banner_id as student_id,
---             first_name,
---             middle_name,
---             last_name,
-       budget_period,
-       student_residence,
-       tuition_and_fees,
-       books_and_supplies,
-       room_and_board,
-       health_insurance,
-       transportation,
-       computer_and_tech,
-       all_other,
-       budget_total/**/,
+       first_name,
+       middle_name,
+       last_name,
        financial_aid_warning,
        financial_aid_probation,
        financial_aid_ineligibility,
        federal_elegibility,
-       nvl(pell_grant, 0),
-       nvl(direct, 0),
+       nvl(pell_grant, 0) as pell_grant,
+       nvl(direct, 0) as subsidized_direct,
        unsubsidized,
        plus as parent_plus,
        '' as grad_plus,
-       teach,
+       teach as fed_teach,
        perkins,
-       seog,
-       work_study,
+       seog as fed_seog,
+       work_study as fed_work_study,
        service_grant,
        veteran,
        -- State Aid
@@ -419,7 +434,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = state_program_1
           and rfrbase_fsrc_code = 'STAT'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as state_program_1_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as state_program_1_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = state_program_1) as state_program_1_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
@@ -428,7 +443,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = state_program_1
           and rfrbase_fsrc_code = 'STAT'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as state_program_1_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as state_program_1_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -436,7 +451,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = state_program_2
           and rfrbase_fsrc_code = 'STAT'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as state_program_2_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as state_program_2_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = state_program_2) as state_program_2_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
@@ -445,7 +460,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = state_program_2
           and rfrbase_fsrc_code = 'STAT'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as state_program_2_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as state_program_2_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -453,7 +468,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = state_program_3
           and rfrbase_fsrc_code = 'STAT'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as state_program_3_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as state_program_3_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = state_program_3) as state_program_3_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
@@ -462,7 +477,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = state_program_3
           and rfrbase_fsrc_code = 'STAT'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as state_program_3_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as state_program_3_amount,
        -- Institution Aid
        institution_aid,
        (select distinct rfrbase_fund_title
@@ -472,7 +487,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = institution_program_1
           and rfrbase_fsrc_code in ('INST', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as institution_program_1_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as institution_program_1_name,
        (select np_fund_type
         from npsas_fund_lookup
         where np_fund_code = institution_program_1) as institution_program_1_type,
@@ -483,7 +498,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = institution_program_1
           and rfrbase_fsrc_code in ('INST', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as institution_program_1_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as institution_program_1_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -491,7 +506,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = institution_program_2
           and rfrbase_fsrc_code in ('INST', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as institution_program_2_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as institution_program_2_name,
        (select np_fund_type
         from npsas_fund_lookup
         where np_fund_code = institution_program_2) as institution_program_2_type,
@@ -502,7 +517,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = institution_program_2
           and rfrbase_fsrc_code in ('INST', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as institution_program_2_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as institution_program_2_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -510,7 +525,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = institution_program_3
           and rfrbase_fsrc_code in ('INST', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as institution_program_3_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as institution_program_3_name,
        (select np_fund_type
         from npsas_fund_lookup
         where np_fund_code = institution_program_3) as institution_program_3_type,
@@ -521,7 +536,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = institution_program_3
           and rfrbase_fsrc_code in ('INST', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as institution_program_3_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as institution_program_3_amount,
        -- Private Aid
        private_aid,
        (select distinct rfrbase_fund_title
@@ -531,7 +546,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = private_program_1
           and rfrbase_fsrc_code = 'PRIV'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as private_program_1_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_1_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = private_program_1) as private_program_1_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
@@ -540,7 +555,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = private_program_1
           and rfrbase_fsrc_code = 'PRIV'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as private_program_1_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_1_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -548,7 +563,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = private_program_2
           and rfrbase_fsrc_code = 'PRIV'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as private_program_2_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_2_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = private_program_2) as private_program_2_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
@@ -557,7 +572,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = private_program_2
           and rfrbase_fsrc_code = 'PRIV'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as private_program_2_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_2_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -565,7 +580,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = private_program_3
           and rfrbase_fsrc_code = 'PRIV'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as private_program_3_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_3_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = private_program_3) as private_program_3_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
@@ -574,7 +589,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = private_program_3
           and rfrbase_fsrc_code = 'PRIV'
-          and rpratrm_period in ('20193E', '20194E', '202023')) as private_program_3_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_3_amount,
        -- Other aid
        other_aid,
        (select distinct rfrbase_fund_title
@@ -584,7 +599,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_1
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as other_program_1_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as other_program_1_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = other_program_1) as other_program_1_type,
        case when other_program_1 is not null then 4 end as other_program_1_source,
        (select SUM(rpratrm_orig_offer_amt)
@@ -594,7 +609,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_1
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as other_program_1_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as other_program_1_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -602,7 +617,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_2
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as other_program_2_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as other_program_2_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = other_program_2) as other_program_2_type,
        case when other_program_2 is not null then 4 end as other_program_2_source,
        (select SUM(rpratrm_orig_offer_amt)
@@ -612,7 +627,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_2
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as other_program_2_amount,
+          and rpratrm_period in ('201930', '201940', '202020')) as other_program_2_amount,
        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
@@ -620,7 +635,7 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_3
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as other_program_3_name,
+          and rpratrm_period in ('201930', '201940', '202020')) as other_program_3_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = other_program_3) as other_program_3_type,
        case when other_program_3 is not null then 4 end as other_program_3_source,
        (select SUM(rpratrm_orig_offer_amt)
@@ -630,25 +645,9 @@ select 1 as file_spec_ver_num,
           and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_3
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
-          and rpratrm_period in ('20193E', '20194E', '202023')) as other_program_3_amount/**/
+          and rpratrm_period in ('201930', '201940', '202020')) as other_program_3_amount/**/
 from student_list
 where rn = 1;
 
 ------------------------------------------------------------------------------------------------------------------------------
-/*
-SELECT shrdgmr_acyr_code, prgm_code, count(*) AS graduates
-FROM   shrdgmr
-       LEFT JOIN dsc_programs_current ON shrdgmr_program = prgm_code
-WHERE  shrdgmr_degs_code IN ('AW','PN')
-AND    school_code = 'BU'
-AND    shrdgmr_degc_code LIKE 'C%'
-GROUP  BY prgm_code, shrdgmr_acyr_code
-ORDER  BY shrdgmr_acyr_code, prgm_code;
-
-
-SELECT DISTINCT rfrbase_fund_code, rfrbase_fund_code
-FROM   rpratrm, rfrbase
-WHERE  rfrbase_fund_code = rpratrm_fund_code
-AND    rpratrm_period   IN ('20193E', '20194E', '202023');
-
 -- end of file
