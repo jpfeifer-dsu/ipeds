@@ -1,3 +1,68 @@
+--Budget
+select distinct
+       1 as file_spec_ver_num,
+       '230171' as institute_id,
+       study_id,
+       spriden.spriden_id as student_id,
+--        spriden.spriden_last_name,
+--        spriden.spriden_first_name,
+--        rorstat.rorstat_aidy_code,
+--        nvl((select distinct '1'
+--             from stvterm
+--             where stvterm_fa_proc_yr = :main_EB_AidYear
+--               and (dsc.f_registered_this_term(spriden.spriden_id, '20' || substr(:main_EB_AidYear, 1, 2) || '40') =
+--                    'Y' or
+--                    dsc.f_registered_this_term(spriden.spriden_id, '20' || substr(:main_EB_AidYear, 3, 2) || '20') =
+--                    'Y')), '0') "Registered",
+       decode(rorstat_aprd_code, 'SPRING', '2', 'SUMMER', '2', '1') "Budget_Period",
+       decode(rcrapp1.rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1') "Student_Residence",
+       nvl((select sum(rbrapbc_amt)
+            from faismgr.rbrapbc
+            where rbrapbc_pidm = spriden_pidm
+              and rbrapbc_aidy_code = :main_EB_AidYear
+              and rbrapbc_pbtp_code = 'CAMP'
+              and rbrapbc_pbcp_code in ('TUIT', 'FEES')), 0) "Tuition",
+       nvl((select sum(rbrapbc_amt)
+            from faismgr.rbrapbc
+            where rbrapbc_pidm = spriden_pidm
+              and rbrapbc_aidy_code = :main_EB_AidYear
+              and rbrapbc_pbtp_code = 'CAMP'
+              and rbrapbc_pbcp_code = 'B+S'), 0) "Books",
+       nvl((select sum(rbrapbc_amt)
+            from faismgr.rbrapbc
+            where rbrapbc_pidm = spriden_pidm
+              and rbrapbc_aidy_code = :main_EB_AidYear
+              and rbrapbc_pbtp_code = 'CAMP'
+              and rbrapbc_pbcp_code = 'R+B'), 0) "Room",
+       nvl((select sum(rbrapbc_amt)
+            from faismgr.rbrapbc
+            where rbrapbc_pidm = spriden_pidm
+              and rbrapbc_aidy_code = :main_EB_AidYear
+              and rbrapbc_pbtp_code = 'CAMP'
+              and rbrapbc_pbcp_code = 'TRAN'), 0) "Transportation",
+       0 "Insurance",
+       0 "Computer",
+       nvl((select sum(rbrapbc_amt)
+            from faismgr.rbrapbc
+            where rbrapbc_pidm = spriden_pidm
+              and rbrapbc_aidy_code = :main_EB_AidYear
+              and rbrapbc_pbtp_code = 'CAMP'
+              and rbrapbc_pbcp_code not in ('TUIT', 'FEES', 'TRAN', 'B+S', 'R+B')), 0) "Others",
+       nvl((select sum(rbrapbc_amt)
+            from faismgr.rbrapbc
+            where rbrapbc_pidm = spriden_pidm
+              and rbrapbc_aidy_code = :main_EB_AidYear
+              and rbrapbc_pbtp_code = 'CAMP'), 0) "Total_Budget"
+from saturn.spriden spriden,
+     faismgr.rorstat rorstat,
+     faismgr.rcrapp1 rcrapp1,
+     ipeds_npsas_sample_data_2020@dscir
+where (spriden.spriden_pidm = rorstat.rorstat_pidm (+) and rorstat.rorstat_pidm = rcrapp1.rcrapp1_pidm (+) and
+       rorstat.rorstat_aidy_code = rcrapp1.rcrapp1_aidy_code (+) and '00' || student_id = spriden_id)
+  and (spriden.spriden_change_ind is null and rorstat.rorstat_aidy_code = :main_EB_AidYear and
+       (rcrapp1.rcrapp1_curr_rec_ind = 'Y' or rcrapp1.rcrapp1_curr_rec_ind is null));
+
+--Financial Aid
 with student_list as (select pidm,
                              banner_id,
                              study_id,
@@ -149,7 +214,7 @@ with student_list as (select pidm,
                                    nvl((select decode(rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1')
                                         from rcrapp1
                                         where rcrapp1_pidm = spriden_pidm
-                                          and rcrapp1_aidy_code = 1920
+                                          and rcrapp1_aidy_code = :main_EB_AidYear
                                           and (rcrapp1_curr_rec_ind = 'Y' or rcrapp1_curr_rec_ind is null)),
                                        '-1') as student_residence,
                                    -- Found on IPEDS IC - Part D - Undergraduate Student Charges
@@ -159,14 +224,14 @@ with student_list as (select pidm,
                                    end as tuition_and_fees,
                                    (select avg(rbrcomp_amt)
                                     from rbrcomp
-                                    where rbrcomp_aidy_code = '1920'
+                                    where rbrcomp_aidy_code = ':main_EB_AidYear'
                                       and rbrcomp_btyp_code = 'CAMP'
                                       and rbrcomp_aprd_code = 'FA/SPR'
                                       and regexp_like(rbrcomp_bgrp_code, case nvl((select distinct
                                                                                           decode(rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1')
                                                                                    from rcrapp1
                                                                                    where rcrapp1_pidm = spriden_pidm
-                                                                                     and rcrapp1_aidy_code = '1920'
+                                                                                     and rcrapp1_aidy_code = ':main_EB_AidYear'
                                                                                      and (rcrapp1_curr_rec_ind = 'Y' or rcrapp1_curr_rec_ind is null)),
                                                                                   '-1')
                                                                              when '1' then '^(COMRES|COMNR|GNCOM)'
@@ -177,14 +242,14 @@ with student_list as (select pidm,
                                       and rbrcomp_comp_code = 'B+S') as books_and_supplies,
                                    (select avg(rbrcomp_amt) + (30 * 82) -- Room and Board + ( Median Meal Plan Times 30 weeks )
                                     from rbrcomp
-                                    where rbrcomp_aidy_code = '1920'
+                                    where rbrcomp_aidy_code = ':main_EB_AidYear'
                                       and rbrcomp_btyp_code = 'CAMP'
                                       and rbrcomp_aprd_code = 'FA/SPR'
                                       and regexp_like(rbrcomp_bgrp_code, case nvl((select distinct
                                                                                           decode(rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1')
                                                                                    from rcrapp1
                                                                                    where rcrapp1_pidm = spriden_pidm
-                                                                                     and rcrapp1_aidy_code = '1920'
+                                                                                     and rcrapp1_aidy_code = ':main_EB_AidYear'
                                                                                      and (rcrapp1_curr_rec_ind = 'Y' or rcrapp1_curr_rec_ind is null)),
                                                                                   '-1')
                                                                              when '1' then '^(COMRES|COMNR|GNCOM)'
@@ -195,14 +260,14 @@ with student_list as (select pidm,
                                       and rbrcomp_comp_code = 'R+B') as room_and_board,
                                    (select avg(rbrcomp_amt)
                                     from rbrcomp
-                                    where rbrcomp_aidy_code = '1920'
+                                    where rbrcomp_aidy_code = ':main_EB_AidYear'
                                       and rbrcomp_btyp_code = 'CAMP'
                                       and rbrcomp_aprd_code = 'FA/SPR'
                                       and regexp_like(rbrcomp_bgrp_code, case nvl((select distinct
                                                                                           decode(rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1')
                                                                                    from rcrapp1
                                                                                    where rcrapp1_pidm = spriden_pidm
-                                                                                     and rcrapp1_aidy_code = '1920'
+                                                                                     and rcrapp1_aidy_code = ':main_EB_AidYear'
                                                                                      and (rcrapp1_curr_rec_ind = 'Y' or rcrapp1_curr_rec_ind is null)),
                                                                                   '-1')
                                                                              when '1' then '^(COMRES|COMNR|GNCOM)'
@@ -213,14 +278,14 @@ with student_list as (select pidm,
                                       and rbrcomp_comp_code = 'TRAN') as transportation,
                                    (select avg(rbrcomp_amt)
                                     from rbrcomp
-                                    where rbrcomp_aidy_code = '1920'
+                                    where rbrcomp_aidy_code = ':main_EB_AidYear'
                                       and rbrcomp_btyp_code = 'CAMP'
                                       and rbrcomp_aprd_code = 'FA/SPR'
                                       and regexp_like(rbrcomp_bgrp_code, case nvl((select distinct
                                                                                           decode(rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1')
                                                                                    from rcrapp1
                                                                                    where rcrapp1_pidm = spriden_pidm
-                                                                                     and rcrapp1_aidy_code = '1920'
+                                                                                     and rcrapp1_aidy_code = ':main_EB_AidYear'
                                                                                      and (rcrapp1_curr_rec_ind = 'Y' or rcrapp1_curr_rec_ind is null)),
                                                                                   '-1')
                                                                              when '1' then '^(COMRES|COMNR|GNCOM)'
@@ -380,29 +445,6 @@ with student_list as (select pidm,
                               and (spbpers_confid_ind is null or spbpers_confid_ind <> 'Y')
                             order by spriden_last_name, spriden_first_name))
 
---Budget
--- select 1 as file_spec_ver_num,
---        '230171' as institute_id,
---        study_id,
---        banner_id as student_id,
---        first_name,
---        middle_name,
---        last_name,
---        budget_period,
---        budget_full_year,
---        student_residence,
---        tuition_and_fees,
---        books_and_supplies,
---        room_and_board,
---        health_insurance,
---        transportation,
---        computer_and_tech,
---        all_other,
---        budget_total
--- from student_list
--- where rn = 1;
-
---Financial Aid
 select 1 as file_spec_ver_num,
        '230171' as institute_id,
        study_id,
