@@ -1,68 +1,11 @@
---Budget
-select distinct
-       1 as file_spec_ver_num,
-       '230171' as institute_id,
-       study_id,
-       spriden.spriden_id as student_id,
---        spriden.spriden_last_name,
---        spriden.spriden_first_name,
---        rorstat.rorstat_aidy_code,
---        nvl((select distinct '1'
---             from stvterm
---             where stvterm_fa_proc_yr = :main_EB_AidYear
---               and (dsc.f_registered_this_term(spriden.spriden_id, '20' || substr(:main_EB_AidYear, 1, 2) || '40') =
---                    'Y' or
---                    dsc.f_registered_this_term(spriden.spriden_id, '20' || substr(:main_EB_AidYear, 3, 2) || '20') =
---                    'Y')), '0') "Registered",
-       decode(rorstat_aprd_code, 'SPRING', '2', 'SUMMER', '2', '1') "Budget_Period",
-       decode(rcrapp1.rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1') "Student_Residence",
-       nvl((select sum(rbrapbc_amt)
-            from faismgr.rbrapbc
-            where rbrapbc_pidm = spriden_pidm
-              and rbrapbc_aidy_code = :main_EB_AidYear
-              and rbrapbc_pbtp_code = 'CAMP'
-              and rbrapbc_pbcp_code in ('TUIT', 'FEES')), 0) "Tuition",
-       nvl((select sum(rbrapbc_amt)
-            from faismgr.rbrapbc
-            where rbrapbc_pidm = spriden_pidm
-              and rbrapbc_aidy_code = :main_EB_AidYear
-              and rbrapbc_pbtp_code = 'CAMP'
-              and rbrapbc_pbcp_code = 'B+S'), 0) "Books",
-       nvl((select sum(rbrapbc_amt)
-            from faismgr.rbrapbc
-            where rbrapbc_pidm = spriden_pidm
-              and rbrapbc_aidy_code = :main_EB_AidYear
-              and rbrapbc_pbtp_code = 'CAMP'
-              and rbrapbc_pbcp_code = 'R+B'), 0) "Room",
-       nvl((select sum(rbrapbc_amt)
-            from faismgr.rbrapbc
-            where rbrapbc_pidm = spriden_pidm
-              and rbrapbc_aidy_code = :main_EB_AidYear
-              and rbrapbc_pbtp_code = 'CAMP'
-              and rbrapbc_pbcp_code = 'TRAN'), 0) "Transportation",
-       0 "Insurance",
-       0 "Computer",
-       nvl((select sum(rbrapbc_amt)
-            from faismgr.rbrapbc
-            where rbrapbc_pidm = spriden_pidm
-              and rbrapbc_aidy_code = :main_EB_AidYear
-              and rbrapbc_pbtp_code = 'CAMP'
-              and rbrapbc_pbcp_code not in ('TUIT', 'FEES', 'TRAN', 'B+S', 'R+B')), 0) "Others",
-       nvl((select sum(rbrapbc_amt)
-            from faismgr.rbrapbc
-            where rbrapbc_pidm = spriden_pidm
-              and rbrapbc_aidy_code = :main_EB_AidYear
-              and rbrapbc_pbtp_code = 'CAMP'), 0) "Total_Budget"
-from saturn.spriden spriden,
-     faismgr.rorstat rorstat,
-     faismgr.rcrapp1 rcrapp1,
-     ipeds_npsas_sample_data_2020@dscir
-where (spriden.spriden_pidm = rorstat.rorstat_pidm (+) and rorstat.rorstat_pidm = rcrapp1.rcrapp1_pidm (+) and
-       rorstat.rorstat_aidy_code = rcrapp1.rcrapp1_aidy_code (+) and '00' || student_id = spriden_id)
-  and (spriden.spriden_change_ind is null and rorstat.rorstat_aidy_code = :main_EB_AidYear and
-       (rcrapp1.rcrapp1_curr_rec_ind = 'Y' or rcrapp1.rcrapp1_curr_rec_ind is null));
+/****************************************************************************
+Update :main_EB_AidYear to current FA aidy code (i.e. '1920')
+Update join on sample student table (i.e ipeds_npsas_sample_data_2020@dscir)
+Execute Query
+Export as CSV file with no headers
+ ***************************************************************************/
 
---Financial Aid
+-- IPEDS-NPSAS Financial Aid
 with student_list as (select pidm,
                              banner_id,
                              study_id,
@@ -449,9 +392,9 @@ select 1 as file_spec_ver_num,
        '230171' as institute_id,
        study_id,
        banner_id as student_id,
-       first_name,
-       middle_name,
-       last_name,
+--        first_name,
+--        middle_name,
+--        last_name,
        financial_aid_warning,
        financial_aid_probation,
        financial_aid_ineligibility,

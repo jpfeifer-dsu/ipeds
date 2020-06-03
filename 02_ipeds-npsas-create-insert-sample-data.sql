@@ -1,4 +1,5 @@
 -- drop table ipeds_npsas_sample_data_2020;
+-- change to ipeds_npsas_sample_data_20xx
 
 create table ipeds_npsas_sample_data_2020 (
     institute_id varchar2(6),
@@ -26,4 +27,4 @@ from ipeds_npsas_sample_data_2020;
 
 
 
---once created, import data from the return sample file received from NPSAS
+-- once created, import data from the return sample file received from NPSAS
