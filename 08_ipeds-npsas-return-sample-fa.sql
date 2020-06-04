@@ -1,4 +1,4 @@
--- IPEDS-NPSAS Financial Aid
+-- ipeds_npsas_submit_FA
 with student_list as (select pidm,
                              banner_id,
                              study_id,
@@ -8,7 +8,7 @@ with student_list as (select pidm,
                              last_name,
                              null as budget_full_year,
                              1 as registered,
-                            budget_period,
+                             budget_period,
                              student_residence,
                              tuition_and_fees,
                              books_and_supplies,
@@ -266,15 +266,11 @@ with student_list as (select pidm,
                                                      and rpratrm_orig_offer_amt > 0) then 1
                                        else 0
                                    end as federal_elegibility,
-                                   (select SUM(distinct rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_fund_code = 'FPELL'
-          and spriden_pidm in (select rpratrm_pidm
-                               from faismgr.rpratrm
-                               where rpratrm_period in ('201930', '201940', '202020')
-                                 and rpratrm_fund_code = 'FPELL')) as pell_grant,
-
+                                   (select SUM(rpratrm_orig_offer_amt)
+                                    from faismgr.rpratrm
+                                    where rpratrm_pidm = spriden_pidm
+                                      and rpratrm_fund_code = 'FPELL'
+                                      and rpratrm_period in ('202030', '201940', '202020')) as pell_grant,
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
@@ -408,8 +404,8 @@ select 1 as file_spec_ver_num,
        service_grant,
        veteran,
        -- State Aid
-      state_aid,
-        (select distinct rfrbase_fund_title
+       state_aid,
+       (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
         where rpratrm_pidm = pidm
@@ -417,7 +413,9 @@ select 1 as file_spec_ver_num,
           and rpratrm_fund_code = state_program_1
           and rfrbase_fsrc_code = 'STAT'
           and rpratrm_period in ('201930', '201940', '202020')) as state_program_1_name,
-        (select distinct np_fund_type from npsas_fund_lookup where np_fund_code = state_program_1) as state_program_1_type,
+       (select distinct np_fund_type
+        from npsas_fund_lookup
+        where np_fund_code = state_program_1) as state_program_1_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
              rfrbase
@@ -624,7 +622,7 @@ select 1 as file_spec_ver_num,
         from rpratrm,
              rfrbase
         where rpratrm_pidm = pidm
-         and rfrbase_fund_code = rpratrm_fund_code
+          and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_3
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
           and rpratrm_period in ('201930', '201940', '202020')) as other_program_3_amount
