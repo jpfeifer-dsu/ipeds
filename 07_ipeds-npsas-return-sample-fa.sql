@@ -11,8 +11,8 @@ select distinct
        study_id,
        -- spriden.spriden_pidm,
        spriden.spriden_id student_id,
---        spriden.spriden_last_name as last_name,
---        spriden.spriden_first_name as first_name,
+       spriden.spriden_last_name as last_name,
+       spriden.spriden_first_name as first_name,
        '' as financial_aid_warning,
        '' as financial_aid_probation,
        '' as financial_aid_ineligibility,
@@ -79,13 +79,13 @@ select distinct
               and rpratrm_aidy_code = :main_EB_AidYear
               and rfrbase_fsrc_code = 'STAT'), '') "State_Name",
 
-      (select decode(rfrbase_ftyp_code, 'NEED', '1', 'GENL', '5', 'SCHL', '2', 'WORK', '7', rfrbase_ftyp_code)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code = 'STAT') "State_Programs_TEST",
+--       (select decode(rfrbase_ftyp_code, 'NEED', '1', 'GENL', '5', 'SCHL', '2', 'WORK', '7', rfrbase_ftyp_code)
+--         from faismgr.rpratrm,
+--              faismgr.rfrbase
+--         where rpratrm_pidm = spriden_pidm
+--           and rfrbase_fund_code = rpratrm_fund_code
+--           and rpratrm_aidy_code = :main_EB_AidYear
+--           and rfrbase_fsrc_code = 'STAT') "State_Programs_TEST",
 
        (select listagg(decode(rfrbase_ftyp_code, 'NEED', '1', 'GENL', '5', 'SCHL', '2', 'WORK', '7', rfrbase_ftyp_code),
                        ',') within group (order by rfrbase_ftyp_code)
