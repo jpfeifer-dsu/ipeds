@@ -1,204 +1,3 @@
-/****************************************************************************
-Update :main_EB_AidYear to current FA aidy code (i.e. '1920')
-Update join on sample student table (i.e ipeds_npsas_sample_data_2020@dscir)
-Execute Query
-Export as CSV file with no headers
- ***************************************************************************/
--- ipeds_npsas_submit_FA
-select distinct
-        1 as file_spec_ver_num,
-       '230171' as institute_id,
-       study_id,
-       -- spriden.spriden_pidm,
-       spriden.spriden_id student_id,
-       spriden.spriden_last_name as last_name,
-       spriden.spriden_first_name as first_name,
-       '' as financial_aid_warning,
-       '' as financial_aid_probation,
-       '' as financial_aid_ineligibility,
-       nvl((select distinct '1'
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rpratrm_fund_code = rfrbase_fund_code
-              and rpratrm_orig_offer_amt > 0
-              and rfrbase_fsrc_code = 'FDRL'), '0') as federal_elegibility,
-       (select SUM(distinct rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_fund_code = 'FPELL'
-          and spriden_pidm in (select rpratrm_pidm
-                               from faismgr.rpratrm
-                               where rpratrm_period in ('201930', '201940', '202020')
-                                 and rpratrm_fund_code = 'FPELL')) as pell_grant,
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rpratrm_fund_code = 'DIRECT') as subsidized_direct,
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rpratrm_fund_code = 'DUSUB') as unsubsidized,
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rpratrm_fund_code = 'DPLUS') as parent_plus,
-       '' as fed_teach,
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rpratrm_fund_code = 'FPERK') as perkins,
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rpratrm_fund_code in ('FSEOG', 'FSEOGS')) as fed_seog,
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm
-        where rpratrm_pidm = spriden_pidm
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rpratrm_fund_code in ('FCWS', 'FCWSA')) as fed_work_study,
-       '' as service_grant,
-       (select distinct sgrvetn_vetc_code from sgrvetn where sgrvetn_pidm = spriden_pidm) as veteran,
-       nvl((select distinct '1'
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code = 'STAT'), '0') as state_aid,
-       nvl((select listagg(rfrbase_fund_title, ',') within group (order by rfrbase_fund_title)
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code = 'STAT'), '') "State_Name",
-
---       (select decode(rfrbase_ftyp_code, 'NEED', '1', 'GENL', '5', 'SCHL', '2', 'WORK', '7', rfrbase_ftyp_code)
---         from faismgr.rpratrm,
---              faismgr.rfrbase
---         where rpratrm_pidm = spriden_pidm
---           and rfrbase_fund_code = rpratrm_fund_code
---           and rpratrm_aidy_code = :main_EB_AidYear
---           and rfrbase_fsrc_code = 'STAT') "State_Programs_TEST",
-
-       (select listagg(decode(rfrbase_ftyp_code, 'NEED', '1', 'GENL', '5', 'SCHL', '2', 'WORK', '7', rfrbase_ftyp_code),
-                       ',') within group (order by rfrbase_ftyp_code)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code = 'STAT') "State_Programs",
-       nvl((select SUM(rpratrm_orig_offer_amt)
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code = 'STAT'), '0') "State_Amount",
-       nvl((select distinct '1'
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code in ('INST', 'PRES')), '0') "Institution_Aid",
-       nvl((select listagg(rfrbase_fund_title, ',') within group (order by rfrbase_fund_title)
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code in ('INST', 'PRES')), '') "Institution_Name",
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code in ('INST', 'PRES')) "Institution_Amount",
-       '' "Graduate_Aid",
-       (select listagg(decode(rfrbase_ftyp_code, 'GENL', '9', 'SCHL', '9'), ',')
-                       within group (order by rfrbase_ftyp_code)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code in ('INST', 'PRES')) "Institution_Programs",
-       '' "Graduate_Name",
-       '' "Graduate_Programs",
-       '' "Graduate_Amount",
-       nvl((select distinct '1'
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code = 'PRIV'), '0') "Private_Aid",
-       nvl((select listagg(rfrbase_fund_title, ',') within group (order by rfrbase_fund_title)
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code = 'PRIV'), '') "Private_Name",
-       (select listagg(decode(rfrbase_ftyp_code, 'GENL', '9', 'SCHL', '9'), ',')
-                       within group (order by rfrbase_ftyp_code)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code = 'PRIV') "Private_Programs",
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code = 'PRIV') "Private_Amount",
-       nvl((select distinct '1'
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')), '0') "Other_Aid",
-       nvl((select listagg(rfrbase_fund_title, ',') within group (order by rfrbase_fund_title)
-            from faismgr.rpratrm,
-                 faismgr.rfrbase
-            where rpratrm_pidm = spriden_pidm
-              and rfrbase_fund_code = rpratrm_fund_code
-              and rpratrm_aidy_code = :main_EB_AidYear
-              and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')), '') "Other_Name",
-       (select listagg(decode(rfrbase_ftyp_code, 'GENL', '9', 'SCHL', '9'), ',')
-                       within group (order by rfrbase_ftyp_code)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')) "Other_Programs",
-       (select SUM(rpratrm_orig_offer_amt)
-        from faismgr.rpratrm,
-             faismgr.rfrbase
-        where rpratrm_pidm = spriden_pidm
-          and rfrbase_fund_code = rpratrm_fund_code
-          and rpratrm_aidy_code = :main_EB_AidYear
-          and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')) "Other_Amount"
-from saturn.spriden spriden,
-     ipeds_npsas_sample_data_2020@dscir
-where '00' || student_id = spriden_id AND spriden_change_ind is null
-order by 3,4;
-
-/*
 -- IPEDS-NPSAS Financial Aid
 with student_list as (select pidm,
                              banner_id,
@@ -209,7 +8,7 @@ with student_list as (select pidm,
                              last_name,
                              null as budget_full_year,
                              1 as registered,
-                             budget_period,
+                            budget_period,
                              student_residence,
                              tuition_and_fees,
                              books_and_supplies,
@@ -467,11 +266,15 @@ with student_list as (select pidm,
                                                      and rpratrm_orig_offer_amt > 0) then 1
                                        else 0
                                    end as federal_elegibility,
-                                   (select sum(rpratrm_orig_offer_amt)
-                                    from rpratrm
-                                    where rpratrm_pidm = spriden_pidm
-                                      and rpratrm_fund_code = 'FPELL'
-                                      and rpratrm_period in ('201930', '201940', '202020')) as pell_grant,
+                                   (select SUM(distinct rpratrm_orig_offer_amt)
+        from faismgr.rpratrm
+        where rpratrm_pidm = spriden_pidm
+          and rpratrm_fund_code = 'FPELL'
+          and spriden_pidm in (select rpratrm_pidm
+                               from faismgr.rpratrm
+                               where rpratrm_period in ('201930', '201940', '202020')
+                                 and rpratrm_fund_code = 'FPELL')) as pell_grant,
+
                                    (select sum(rpratrm_orig_offer_amt)
                                     from rpratrm
                                     where rpratrm_pidm = spriden_pidm
@@ -586,9 +389,9 @@ select 1 as file_spec_ver_num,
        '230171' as institute_id,
        study_id,
        banner_id as student_id,
---        first_name,
---        middle_name,
---        last_name,
+       first_name,
+       middle_name,
+       last_name,
        financial_aid_warning,
        financial_aid_probation,
        financial_aid_ineligibility,
@@ -605,8 +408,8 @@ select 1 as file_spec_ver_num,
        service_grant,
        veteran,
        -- State Aid
-       state_aid,
-       (select distinct rfrbase_fund_title
+      state_aid,
+        (select distinct rfrbase_fund_title
         from rpratrm,
              rfrbase
         where rpratrm_pidm = pidm
@@ -614,7 +417,7 @@ select 1 as file_spec_ver_num,
           and rpratrm_fund_code = state_program_1
           and rfrbase_fsrc_code = 'STAT'
           and rpratrm_period in ('201930', '201940', '202020')) as state_program_1_name,
-       (select np_fund_type from npsas_fund_lookup where np_fund_code = state_program_1) as state_program_1_type,
+        (select distinct np_fund_type from npsas_fund_lookup where np_fund_code = state_program_1) as state_program_1_type,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
              rfrbase
@@ -821,14 +624,9 @@ select 1 as file_spec_ver_num,
         from rpratrm,
              rfrbase
         where rpratrm_pidm = pidm
-          and rfrbase_fund_code = rpratrm_fund_code
+         and rfrbase_fund_code = rpratrm_fund_code
           and rpratrm_fund_code = other_program_3
           and rfrbase_fsrc_code not in ('STAT', 'INST', 'PRIV', 'FDRL', 'PRES')
           and rpratrm_period in ('201930', '201940', '202020')) as other_program_3_amount
 from student_list
 where rn = 1;
-
-------------------------------------------------------------------------------------------------------------------------------
--- end of file
-
- */

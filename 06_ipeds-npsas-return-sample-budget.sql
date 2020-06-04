@@ -12,10 +12,8 @@ select distinct
        '230171' as institute_id,
        study_id,
        spriden.spriden_id as student_id,
---        spriden.spriden_last_name,
---        spriden.spriden_first_name,
---        rorstat.rorstat_aidy_code,
-       rorstat_aprd_code,
+--        spriden.spriden_last_name as last_name,
+--        spriden.spriden_first_name as first_name,
        decode(rorstat_aprd_code, 'SPRING', '2', 'SUMMER', '2', '1') "Budget_Period",
        0 as "Full_Year_Budget",  -- does not include summer term
        decode(rcrapp1.rcrapp1_inst_hous_cde, '1', '2', '2', '3', '3', '1', '-1') "Student_Residence",
