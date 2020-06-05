@@ -1,7 +1,7 @@
 # ipeds-npsas
-Process: -- 1st Submission File
+### Step 1. Prep and Upload the 1st Submission File
 
-  Run against PROD:
+#### Run against PROD:
 	01_ipeds-npsas-initial_submision.sql
 	
   After submitting NPSAS will send a sample of student data back to DSU to be analyzed
@@ -23,3 +23,4 @@ Process: -- 1st Submission File
 	
 
 -- 2nd Submission File to NPSAS
+
