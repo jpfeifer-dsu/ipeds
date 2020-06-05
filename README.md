@@ -4,8 +4,8 @@
 Use the **PROD** Database
 #### Run Script: 
 * 01_ipeds-npsas-initial_submision.sql
-##### Export as csv and submit to ipeds-npsas
-#### After submitting, NPSAS will send a sample of student data back to DSU to be analyzed
+Export as csv and submit to ipeds-npsas
+After submitting, NPSAS will send a sample of student data back to DSU to be analyzed
 ### Step 2. Insert Sampled Student Data into new table
 Use the **DSCIR** Database 
 * 02_ipeds-npsas-create-insert-sample-data.sql *(change the year of the table name)*
