@@ -1,8 +1,9 @@
 # ipeds-npsas
 ### Step 1. Prep and Upload the 1st Submission File
 
-#### Run against PROD:
-	01_ipeds-npsas-initial_submision.sql
+#### Database: PROD
+#### Script(s): 
+* 01_ipeds-npsas-initial_submision.sql
 	
   After submitting NPSAS will send a sample of student data back to DSU to be analyzed
 -- Sample Data Run against DSCIR: 02_ipeds-npsas-create-insert-sample-data.sql import sampled student data into table
