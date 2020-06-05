@@ -28,11 +28,13 @@ For the FA Aid file, you need to update the npsas_fund_lookup by running the bel
 ### Step 8 Execute the FA Query and Generate a CSV File
 * 08_ipeds-npsas-return-sample-fa.sql
 
-Once done, before submitting, have FA review the Budget and FA files 
+### Step 8 Review Data
+Have FA review the Budget and FA files 
   
-Have the IE director review the General Information and Enrollment files  
+Have the Data Governance Director review the General Information and Enrollment files  
 
-Once reviewed, submit to IPEDS-NPSAS via their website  
+### Step 9 Submit CSV Files to IPEDS
+Submit the csv files to IPEDS-NPSAS by following the instructions provided in the CsvSpecs_230171.xlsx spreadsheet.
 
 
 
