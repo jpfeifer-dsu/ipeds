@@ -21,9 +21,9 @@ Run the Return File Queries
 
 Export results as a csv with **no headers**:  
 
-Export files to: G:\Shared drives\Institutional Effectiveness\IPEDS\ipeds-npsas\npsas-20xx
+Save files to: G:\Shared drives\Institutional Effectiveness\IPEDS\ipeds-npsas\npsas-20xx
 ### Step 7 Update NPSAS Fund Lookup Table
-For the FA Aid file, you need to update the npsas_fund_lookup by running the below script:
+For the FA Aid file, you need to update the npsas_fund_lookup table by running the below script:
 * 07_ipeds-npsas-fund-lookup-create.sql
 ### Step 8 Execute the FA Query and Generate a CSV File
 * 08_ipeds-npsas-return-sample-fa.sql
