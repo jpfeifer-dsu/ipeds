@@ -18,7 +18,9 @@ Run the Return File Queries
 * 04_ipeds-npsas-return-sample-general.sql
 * 05_ipeds-npsas-return-sample-enrollment.sql
 * 06_ipeds-npsas-return-sample-budget.sql  
+
 Export results as a csv with **no headers**:  
+
 Export files to: G:\Shared drives\Institutional Effectiveness\IPEDS\ipeds-npsas\npsas-20xx
 ### Step 7 Update NPSAS Fund Lookup Table
 For the FA Aid file, you need to update the npsas_fund_lookup by running the below script:
