@@ -137,8 +137,8 @@ create table enroll.ipeds_npsas_sample_20
     hrs_credit_ay1920       varchar2(10),  -- Total Number of Credit Hours in Program (2019-2020 academic year)
     cum_credits_ay1920      varchar2(10),  -- Cumulative Credit Hours Completed (2019-2020 academic year)
     tuition_ay1920          varchar2(10),  -- TotalTuition and Mandatory Fees Charged ($) (2019-2020 academic year)
-    tuition_covid19_ay1920  number(10),  -- Tuition and Fees Refunded for COVID-19 ($) (2019-2020 academic year)
-    rb_covid19_ay1920       number(10),   -- Room and board refunded for COVID-19 (2019-2020 academic year)
+    tuition_covid19_ay1920  number(10),    -- Tuition and Fees Refunded for COVID-19 ($) (2019-2020 academic year)
+    rb_covid19_ay1920       number(10),    -- Room and board refunded for COVID-19 (2019-2020 academic year)
     residency_ay1920        varchar2(2),   -- Residency for Tuition Purposes (2019-2020 academic year)
 
     enroll_summer_ptft_2019 varchar2(10),  -- Enrollment Status (Summer 2019)
@@ -238,7 +238,7 @@ select '1' as ipeds_fsvn,
 from students03@dscir s1,
      spbpers,
      spriden
-     inner join ipeds_npsas_sample_data_2020@dscir s2 on '00' || student_id = spriden_id  -- imported table with sampled students
+     inner join ipeds_npsas_sample_data_2020@dscir s2 on '00' || student_id = spriden_id -- imported table with sampled students
 where dsc_pidm = spbpers_pidm
   and dsc_pidm = spriden_pidm
   and s_entry_action <> 'HS'
@@ -1149,12 +1149,26 @@ commit;
 -- Round dollar amounts to the nearest whole dollar
 -- This information came fromt the housing department.  See https://drive.google.com/drive/u/2/folders/1vfQNBv5nvXa3azXGhubMya_CHVKczE42
 
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 208 where ipeds_studentid = '00398881';
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 523 where ipeds_studentid = '00394001';
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 700 where ipeds_studentid = '00399950';
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 275 where ipeds_studentid = '00394001';
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 232 where ipeds_studentid = '00413111';
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 523 where ipeds_studentid = '00404936';
-update enroll.ipeds_npsas_sample_20 set rb_covid19_ay1920 = 450 where ipeds_studentid = '00400210';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 208
+where ipeds_studentid = '00398881';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 523
+where ipeds_studentid = '00394001';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 700
+where ipeds_studentid = '00399950';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 275
+where ipeds_studentid = '00394001';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 232
+where ipeds_studentid = '00413111';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 523
+where ipeds_studentid = '00404936';
+update enroll.ipeds_npsas_sample_20
+set rb_covid19_ay1920 = 450
+where ipeds_studentid = '00400210';
 
 commit;
