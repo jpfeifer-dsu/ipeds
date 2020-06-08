@@ -855,6 +855,7 @@ set act_engl_score = ( -- ACT English
     where sortest_pidm = dsu_pidm
       and sortest_tesc_code in ('A01', 'A07', 'NEW')
       and sortest_test_score between 0 and 36
+      and (sortest_equiv_ind <> 'Y')
       and sortest_test_date = (select MAX(sortest_test_date)
                                from sortest
                                where sortest_pidm = dsu_pidm
@@ -868,6 +869,7 @@ set act_engl_score = ( -- ACT English
         where sortest_pidm = dsu_pidm
           and sortest_tesc_code in ('A02', 'A02N')
           and sortest_test_score between 0 and 36
+          and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
@@ -881,6 +883,7 @@ set act_engl_score = ( -- ACT English
         where sortest_pidm = dsu_pidm
           and sortest_tesc_code in ('A03')
           and sortest_test_score between 0 and 36
+          and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
@@ -894,6 +897,7 @@ set act_engl_score = ( -- ACT English
         where sortest_pidm = dsu_pidm
           and sortest_tesc_code in ('A04')
           and sortest_test_score between 0 and 36
+          and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
@@ -907,6 +911,7 @@ set act_engl_score = ( -- ACT English
         where sortest_pidm = dsu_pidm
           and sortest_tesc_code in ('A05')
           and sortest_test_score between 0 and 36
+          and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
