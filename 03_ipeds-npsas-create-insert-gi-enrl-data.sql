@@ -294,47 +294,11 @@ set perm_add_line1   = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'street1'),
 
 -- Student's Local Address, City, State and Zip Code
 update enroll.ipeds_npsas_sample_20
-set local_add_line1 = (select s1.spraddr_street_line1
-                       from spraddr s1
-                       where s1.spraddr_pidm = dsu_pidm
-                         and s1.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)
-                         and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                 from spraddr s2
-                                                 where s2.spraddr_pidm = dsu_pidm
-                                                   and s2.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm))),
-    local_add_line2 = (select s1.spraddr_street_line2
-                       from spraddr s1
-                       where s1.spraddr_pidm = dsu_pidm
-                         and s1.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)
-                         and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                 from spraddr s2
-                                                 where s2.spraddr_pidm = dsu_pidm
-                                                   and s2.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm))),
-    local_add_city  = (select s1.spraddr_city
-                       from spraddr s1
-                       where s1.spraddr_pidm = dsu_pidm
-                         and s1.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)
-                         and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                 from spraddr s2
-                                                 where s2.spraddr_pidm = dsu_pidm
-                                                   and s2.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm))),
-    local_add_state = (select s1.spraddr_stat_code
-                       from spraddr s1
-                       where s1.spraddr_pidm = dsu_pidm
-                         and s1.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)
-                         and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                 from spraddr s2
-                                                 where s2.spraddr_pidm = dsu_pidm
-                                                   and s2.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm))),
-    local_add_zip   = (select substr(s1.spraddr_zip, 0, 5)
-                       from spraddr s1
-                       where s1.spraddr_pidm = dsu_pidm
-                         and s1.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)
-                         and REGEXP_LIKE(substr(trim(s1.spraddr_zip), 0, 5), '^[[:digit:]]+$')
-                         and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                 from spraddr s2
-                                                 where s2.spraddr_pidm = dsu_pidm
-                                                   and s2.spraddr_atyp_code = enroll.f_get_local_atyp(dsu_pidm)));
+set local_add_line1 = dsc.f_get_formatted_addr(dsu_pidm, 'CC_LOCAL', 'street1'),
+    local_add_line2 = dsc.f_get_formatted_addr(dsu_pidm, 'CC_LOCAL', 'street2'),
+    local_add_city  = dsc.f_get_formatted_addr(dsu_pidm, 'CC_LOCAL', 'city'),
+    local_add_state = dsc.f_get_formatted_addr(dsu_pidm, 'CC_LOCAL', 'state'),
+    local_add_zip   = dsc.f_get_formatted_addr(dsu_pidm, 'CC_LOCAL', 'zip');
 
 -- Indicator: Is student permanent resident of state of institution
 update enroll.ipeds_npsas_sample_20
