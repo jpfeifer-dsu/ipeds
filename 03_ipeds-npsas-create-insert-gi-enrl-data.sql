@@ -285,54 +285,12 @@ set ethnicity = case when ethnicity = 'H' then 1 when ethnicity = 'U' then -1 el
 
 -- Permanent Address
 update enroll.ipeds_npsas_sample_20
-set perm_add_line1   = (select s1.spraddr_street_line1
-                        from spraddr s1
-                        where s1.spraddr_pidm = dsu_pidm
-                          and s1.spraddr_atyp_code = '00'
-                          and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                  from spraddr s2
-                                                  where s2.spraddr_pidm = s1.spraddr_pidm
-                                                    and s2.spraddr_atyp_code = '00')),
-    perm_add_line2   = (select s1.spraddr_street_line2
-                        from spraddr s1
-                        where s1.spraddr_pidm = dsu_pidm
-                          and s1.spraddr_atyp_code = '00'
-                          and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                  from spraddr s2
-                                                  where s2.spraddr_pidm = s1.spraddr_pidm
-                                                    and s2.spraddr_atyp_code = '00')),
-    perm_add_city    = (select s1.spraddr_city
-                        from spraddr s1
-                        where s1.spraddr_pidm = dsu_pidm
-                          and s1.spraddr_atyp_code = '00'
-                          and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                  from spraddr s2
-                                                  where s2.spraddr_pidm = s1.spraddr_pidm
-                                                    and s2.spraddr_atyp_code = '00')),
-    perm_add_state   = (select s1.spraddr_stat_code
-                        from spraddr s1
-                        where s1.spraddr_pidm = dsu_pidm
-                          and s1.spraddr_atyp_code = '00'
-                          and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                  from spraddr s2
-                                                  where s2.spraddr_pidm = s1.spraddr_pidm
-                                                    and s2.spraddr_atyp_code = '00')),
-    perm_add_country = (select s1.spraddr_natn_code
-                        from spraddr s1
-                        where s1.spraddr_pidm = dsu_pidm
-                          and s1.spraddr_atyp_code = '00'
-                          and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                  from spraddr s2
-                                                  where s2.spraddr_pidm = s1.spraddr_pidm
-                                                    and s2.spraddr_atyp_code = '00')),
-    perm_add_zip     = (select regexp_replace(substr(s1.spraddr_zip, 0, 9), '[^0-9]', '')
-                        from spraddr s1
-                        where s1.spraddr_pidm = dsu_pidm
-                          and s1.spraddr_atyp_code = '00'
-                          and s1.spraddr_seqno = (select MAX(s2.spraddr_seqno)
-                                                  from spraddr s2
-                                                  where s2.spraddr_pidm = s1.spraddr_pidm
-                                                    and s2.spraddr_atyp_code = '00'));
+set perm_add_line1   = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'street1'),
+    perm_add_line2   = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'street2'),
+    perm_add_city    = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'city'),
+    perm_add_state   = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'state'),
+    perm_add_country = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'country'),
+    perm_add_zip     = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'zip');
 
 -- Student's Local Address, City, State and Zip Code
 update enroll.ipeds_npsas_sample_20
