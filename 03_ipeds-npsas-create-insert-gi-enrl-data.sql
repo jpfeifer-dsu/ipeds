@@ -1134,7 +1134,8 @@ commit;
 -- Update COVID-19 Metrics
 -- Room & Board
 -- Round dollar amounts to the nearest whole dollar
--- This information came fromt the housing department.  See https://drive.google.com/drive/u/2/folders/1vfQNBv5nvXa3azXGhubMya_CHVKczE42
+-- File Name: COVID 19 Housing Reimbursement Report.xlsx
+-- Location: G:\Shared drives\Institutional Effectiveness\IPEDS\ipeds-npsas\npsas-2020\additional docs
 
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 208
@@ -1174,6 +1175,3 @@ set tf_covid19_ay1920 = 1925
 where ipeds_studentid = '00405295';
 
 commit;
-
-select *
-from enroll.ipeds_npsas_sample_20;
