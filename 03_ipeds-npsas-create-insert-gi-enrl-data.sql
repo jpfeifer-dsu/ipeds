@@ -137,7 +137,7 @@ create table enroll.ipeds_npsas_sample_20
     hrs_credit_ay1920       varchar2(10),  -- Total Number of Credit Hours in Program (2019-2020 academic year)
     cum_credits_ay1920      varchar2(10),  -- Cumulative Credit Hours Completed (2019-2020 academic year)
     tuition_ay1920          varchar2(10),  -- TotalTuition and Mandatory Fees Charged ($) (2019-2020 academic year)
-    tuition_covid19_ay1920  number(10),    -- Tuition and Fees Refunded for COVID-19 ($) (2019-2020 academic year)
+    tf_covid19_ay1920  number(10),    -- Tuition and Fees Refunded for COVID-19 ($) (2019-2020 academic year)
     rb_covid19_ay1920       number(10),    -- Room and board refunded for COVID-19 (2019-2020 academic year)
     residency_ay1920        varchar2(2),   -- Residency for Tuition Purposes (2019-2020 academic year)
 
@@ -1152,23 +1152,38 @@ commit;
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 208
 where ipeds_studentid = '00398881';
+
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 523
 where ipeds_studentid = '00394001';
+
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 700
 where ipeds_studentid = '00399950';
+
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 275
 where ipeds_studentid = '00394001';
+
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 232
 where ipeds_studentid = '00413111';
+
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 523
 where ipeds_studentid = '00404936';
+
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 450
 where ipeds_studentid = '00400210';
+
+-- Update COVID-19 Tuition and Fee Refunds
+-- Gathered Refund for Fees from Campus
+-- File Name: CoVID 19 Fee Refunds for NPSAS.xlsx
+-- Location: G:\Shared drives\Institutional Effectiveness\IPEDS\ipeds-npsas\npsas-2020\additional docs
+
+update enroll.ipeds_npsas_sample_20
+set tf_covid19_ay1920 = 1925
+where ipeds_studentid = '00405295';
 
 commit;
