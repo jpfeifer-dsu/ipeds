@@ -347,7 +347,7 @@ set citizenship_status = (select case spbpers_citz_code when '1' then 1 when '2'
 
 -- Student's Local Area Code and Phone Number
 update enroll.ipeds_npsas_sample_20
-set phone1_number = dsc.f_get_formatted_tele(sprtele_pidm, 'LOCPERM', 'none');
+set phone1_number = dsc.f_get_formatted_tele(dsu_pidm, 'LOCPERM', 'none');
 
 update enroll.ipeds_npsas_sample_20
 set phone1_type = '1'
@@ -355,7 +355,7 @@ where phone1_number is not null;
 
 -- Student's Cell Phone Area Code and Phone Number
 update enroll.ipeds_npsas_sample_20
-set phone2_number = dsc.f_get_formatted_tele(sprtele_pidm, 'CELLTELE', 'none');
+set phone2_number = dsc.f_get_formatted_tele(dsu_pidm, 'CELLTELE', 'none');
 
 update enroll.ipeds_npsas_sample_20
 set phone2_type = '2'
@@ -363,20 +363,7 @@ where phone2_number is not null;
 
 -- Student's Work Phone Area Code and Phone Number
 update enroll.ipeds_npsas_sample_20
-set phone1_number = (select substr(s1.sprtele_phone_area || s1.sprtele_phone_number, 1, 10)
-                     from sprtele s1
-                     where s1.sprtele_pidm = dsu_pidm
-                       and s1.sprtele_tele_code = 'WK'
-                       and LENGTH(trim(translate(s1.sprtele_phone_area, ' +-.0123456789', ' '))) is null
-                       and LENGTH(s1.sprtele_phone_area) = '3'
-                       and s1.sprtele_seqno = (select MAX(s2.sprtele_seqno)
-                                               from sprtele s2
-                                               where s2.sprtele_pidm = s1.sprtele_pidm
-                                                 and s2.sprtele_tele_code = 'WK'
-                                                 and LENGTH(
-                                                         trim(translate(s1.sprtele_phone_area, ' +-.0123456789', ' '))) is null
-                                                 and LENGTH(s1.sprtele_phone_area) = '3'))
-where phone1_number is null;
+set phone1_number = dsc.f_get_formatted_tele(dsu_pidm, 'CAMPTELE', 'none');
 
 update enroll.ipeds_npsas_sample_20
 set phone1_type = '3'
@@ -1187,3 +1174,6 @@ set tf_covid19_ay1920 = 1925
 where ipeds_studentid = '00405295';
 
 commit;
+
+select *
+from enroll.ipeds_npsas_sample_20;
