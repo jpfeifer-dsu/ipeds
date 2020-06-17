@@ -14,6 +14,7 @@
 
 drop table enroll.ipeds_npsas_sample_20;
 create table enroll.ipeds_npsas_sample_20
+
 (
     -- General -----------------------------------------------------------------------------------------------------------------
     ipeds_fsvn              varchar2(2),   -- File Specification Version Number
@@ -862,18 +863,19 @@ set has_bach_degree = case
                                                     and shrdgmr_grad_date < sysdate));
 
 -- ACT Test Scores: ----------------------------------------------------------------------------------------
+
 update enroll.ipeds_npsas_sample_20
 set act_engl_score = ( -- ACT English
     select MAX(to_number(sortest_test_score))
     from sortest
     where sortest_pidm = dsu_pidm
-      and sortest_tesc_code in ('A01', 'A07', 'NEW')
+      and sortest_tesc_code = 'A01'
       and sortest_test_score between 0 and 36
       and (sortest_equiv_ind <> 'Y')
       and sortest_test_date = (select MAX(sortest_test_date)
                                from sortest
                                where sortest_pidm = dsu_pidm
-                                 and sortest_tesc_code in ('A01', 'A07', 'NEW')
+                                 and sortest_tesc_code = 'A01'
                                  and sortest_test_score between 0 and 36
                                group by sortest_pidm)
     group by dsu_pidm),
@@ -895,13 +897,13 @@ set act_engl_score = ( -- ACT English
         select MAX(to_number(sortest_test_score))
         from sortest
         where sortest_pidm = dsu_pidm
-          and sortest_tesc_code in ('A03')
+          and sortest_tesc_code = 'A03'
           and sortest_test_score between 0 and 36
           and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
-                                     and sortest_tesc_code in ('A03')
+                                     and sortest_tesc_code = 'A03'
                                      and sortest_test_score between 0 and 36
                                    group by sortest_pidm)
         group by dsu_pidm),
@@ -909,13 +911,13 @@ set act_engl_score = ( -- ACT English
         select MAX(to_number(sortest_test_score))
         from sortest
         where sortest_pidm = dsu_pidm
-          and sortest_tesc_code in ('A04')
+          and sortest_tesc_code = 'A04'
           and sortest_test_score between 0 and 36
           and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
-                                     and sortest_tesc_code in ('A04')
+                                     and sortest_tesc_code = 'A04'
                                      and sortest_test_score between 0 and 36
                                    group by sortest_pidm)
         group by dsu_pidm),
@@ -923,13 +925,13 @@ set act_engl_score = ( -- ACT English
         select MAX(to_number(sortest_test_score))
         from sortest
         where sortest_pidm = dsu_pidm
-          and sortest_tesc_code in ('A05')
+          and sortest_tesc_code = 'A05'
           and sortest_test_score between 0 and 36
           and (sortest_equiv_ind <> 'Y')
           and sortest_test_date = (select MAX(sortest_test_date)
                                    from sortest
                                    where sortest_pidm = dsu_pidm
-                                     and sortest_tesc_code in ('A05')
+                                     and sortest_tesc_code = 'A05'
                                      and sortest_test_score between 0 and 36
                                    group by sortest_pidm)
         group by dsu_pidm);
@@ -940,11 +942,11 @@ set sat_read_score  = ( -- SAT Reading
     select MAX(to_number(sortest_test_score))
     from sortest
     where sortest_pidm = dsu_pidm
-      and sortest_tesc_code in ('S11')
+      and sortest_tesc_code = 'S11'
       and sortest_test_date = (select MAX(sortest_test_date)
                                from sortest
                                where sortest_pidm = dsu_pidm
-                                 and sortest_tesc_code in ('S11')
+                                 and sortest_tesc_code = 'S11'
                                group by sortest_pidm)
     group by dsu_pidm),
     sat_math_score  = ( -- SAT Math
@@ -1028,6 +1030,9 @@ set grad_month_ay1920 = (select to_char(shrdgmr_grad_date, 'MM')
                            and shrdgmr_acyr_code = '1920');
 
 -- Cumulative GPA
+--
+select * from shrlgpa where shrlgpa_gpa_type_ind = 'I';
+
 update enroll.ipeds_npsas_sample_20
 set cum_gpa_ay1920 = (select s1.s_cum_gpa_ugrad
                       from students03@dscir s1
@@ -1145,11 +1150,39 @@ set residency_ay1920 = case (select sgbstdn_resd_code
 
 
 -- Enrollments
+/*
+ Need to include a case statement:
+    null = 0 (not enrolled)
+    F = 1 (full time) or >= 12 credits
+    Part Time is based on credit hours
+    s_term_att_cr 3/4 = 9 to 11.99 then 2
+    s_term_att_cr half = 6 to 8.99 then 3
+    s_term_att_cr < half < 6 then 4
+ s_term_att_cr
+
+ */
+
+
+select SUM(sfrstcr_credit_hr),
+       sfrstcr_pidm,
+       sfrstcr_term_code
+from  sfrstcr r1
+inner join ipeds_npsas_sample_20 n on n.dsu_pidm = r1.sfrstcr_pidm
+left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+where r2.stvrsts_incl_sect_enrl = 'Y'
+and sfrstcr_term_code = '202020' --Spring 2020  202030 Summer 2020
+group by        sfrstcr_pidm,
+       sfrstcr_term_code;
+
+select *
+from stvrsts;
+;
+
 update enroll.ipeds_npsas_sample_20
 set enroll_summer_ptft_2019 = (select s_pt_ft
                                from students03@dscir
                                where dsc_pidm = dsu_pidm and dsc_term_code = '20193E'),
-    enroll_summer_hrs_2019  = (select s_term_att_cr
+    enroll_summer_hrs_2019  = (select s_term_att_cr / 10
                                from students03@dscir
                                where dsc_pidm = dsu_pidm and dsc_term_code = '20193E');
 
@@ -1157,7 +1190,7 @@ update enroll.ipeds_npsas_sample_20
 set enroll_fall_ptft_2019 = (select s_pt_ft
                              from students03@dscir
                              where dsc_pidm = dsu_pidm and dsc_term_code = '20194E'),
-    enroll_fall_hrs_2019  = (select s_term_att_cr
+    enroll_fall_hrs_2019  = (select s_term_att_cr / 10
                              from students03@dscir
                              where dsc_pidm = dsu_pidm and dsc_term_code = '20194E');
 
@@ -1172,10 +1205,10 @@ set enroll_spring_ptft_2020 = (select s_pt_ft
 update enroll.ipeds_npsas_sample_20
 set enroll_summer_ptft_2020 = (select s_pt_ft
                                from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20202E'),
+                               where dsc_pidm = dsu_pidm and dsc_term_code = '20203E'),
     enroll_spring_hrs_2020  = (select s_term_att_cr
                                from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20202E');
+                               where dsc_pidm = dsu_pidm and dsc_term_code = '20203E');
 
 commit;
 
@@ -1223,3 +1256,6 @@ set tf_covid19_ay1920 = 1925
 where ipeds_studentid = '00405295';
 
 commit;
+
+select *
+from enroll.ipeds_npsas_sample_20;
