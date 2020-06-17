@@ -730,28 +730,55 @@ where first_enrl_month is null
    or first_enrl_year is null;
 
 -- Date of Last Enrollment
-update enroll.ipeds_npsas_sample_20
-set last_enrl_month = (select to_char(stvterm_end_date, 'MM')
-                       from stvterm,
-                            students03@dscir
-                       where stvterm_code = substr(dsc_term_code, 1, 5) || 0
-                         and dsc_pidm = dsu_pidm
-                         and dsc_term_code =
-                             (select MAX(dsc_term_code) from students03@dscir where dsc_pidm = dsu_pidm)),
-    last_enrl_day   = (select to_char(stvterm_end_date, 'DD')
-                       from stvterm,
-                            students03@dscir
-                       where stvterm_code = substr(dsc_term_code, 1, 5) || 0
-                         and dsc_pidm = dsu_pidm
-                         and dsc_term_code =
-                             (select MAX(dsc_term_code) from students03@dscir where dsc_pidm = dsu_pidm)),
-    last_enrl_year  = (select to_char(stvterm_end_date, 'YYYY')
-                       from stvterm,
-                            students03@dscir
-                       where stvterm_code = substr(dsc_term_code, 1, 5) || 0
-                         and dsc_pidm = dsu_pidm
-                         and dsc_term_code =
-                             (select MAX(dsc_term_code) from students03@dscir where dsc_pidm = dsu_pidm));
+update enroll.ipeds_npsas_sample_20 a
+set last_enrl_month = (with cte_max_term_code as (select distinct
+                                                         sfbetrm_pidm,
+                                                         max(sfbetrm_term_code) as sfbetrm_term_code
+                                                  from sfbetrm
+                                                  group by sfbetrm_pidm)
+                       select to_char(stvterm_end_date, 'MM')
+                       from enroll.ipeds_npsas_sample_20 b,
+                            cte_max_term_code,
+                            stvterm,
+                            spriden
+                       where dsu_pidm = sfbetrm_pidm
+                         and stvterm_code = sfbetrm_term_code
+                         and spriden_pidm = sfbetrm_pidm
+                         and spriden_change_ind is null
+                         and a.dsu_pidm = b.dsu_pidm),
+
+
+    last_enrl_day   = (with cte_max_term_code as (select distinct
+                                                         sfbetrm_pidm,
+                                                         max(sfbetrm_term_code) as sfbetrm_term_code
+                                                  from sfbetrm
+                                                  group by sfbetrm_pidm)
+                       select to_char(stvterm_end_date, 'DD')
+                       from enroll.ipeds_npsas_sample_20 b,
+                            cte_max_term_code,
+                            stvterm,
+                            spriden
+                       where dsu_pidm = sfbetrm_pidm
+                         and stvterm_code = sfbetrm_term_code
+                         and spriden_pidm = sfbetrm_pidm
+                         and spriden_change_ind is null
+                         and a.dsu_pidm = b.dsu_pidm),
+    last_enrl_year  = (with cte_max_term_code as (select distinct
+                                                         sfbetrm_pidm,
+                                                         max(sfbetrm_term_code) as sfbetrm_term_code
+                                                  from sfbetrm
+                                                  group by sfbetrm_pidm)
+                       select to_char(stvterm_end_date, 'YYYY')
+                       from enroll.ipeds_npsas_sample_20 b,
+                            cte_max_term_code,
+                            stvterm,
+                            spriden
+                       where dsu_pidm = sfbetrm_pidm
+                         and stvterm_code = sfbetrm_term_code
+                         and spriden_pidm = sfbetrm_pidm
+                         and spriden_change_ind is null
+                         and a.dsu_pidm = b.dsu_pidm);
+
 -- Transfer Credits Indicator
 update enroll.ipeds_npsas_sample_20
 set has_xfer_hours = case
