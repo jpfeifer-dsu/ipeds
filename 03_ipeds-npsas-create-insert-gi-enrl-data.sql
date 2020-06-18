@@ -995,6 +995,19 @@ set program_ay1920 = (select case substr(s1.cur_degc1, 1, 1)
                                                 from students03@dscir s2
                                                 where s2.dsc_pidm = dsu_pidm and s2.s_year = '2020'));
 
+
+-- Program Credit Hours
+update ipeds_npsas_sample_20 a
+set hrs_credit_ay1920 = (select sum(hrs_this_yr)
+                     from students03 b, dsc_programs_all c
+                     where
+                           b.cur_prgm1 = c.prgm_code
+                           and c.acyr_code = '1920'
+                           and a.dsu_pidm = b.dsc_pidm
+                       and b.dsc_term_code = (select MAX(s2.dsc_term_code)
+                                               from students03@dscir s2
+                                               where s2.dsc_pidm = dsu_pidm and s2.s_year = '2020'));
+
 -- Graduate Degree
 update enroll.ipeds_npsas_sample_20
 set grad_degree_ay1920 = (select case
@@ -1032,19 +1045,22 @@ set grad_month_ay1920 = (select to_char(shrdgmr_grad_date, 'MM')
                          where shrdgmr_pidm = dsu_pidm
                            and shrdgmr_degc_code not like 'C%'
                            and shrdgmr_degs_code in ('AW', 'PN')
-                           and shrdgmr_acyr_code = '1920'),
+                           and shrdgmr_levl_code in ('GR')
+                           and shrdgmr_acyr_code in ('2019', '2020')),
     grad_day_ay1920   = (select to_char(shrdgmr_grad_date, 'DD')
                          from shrdgmr
                          where shrdgmr_pidm = dsu_pidm
                            and shrdgmr_degc_code not like 'C%'
                            and shrdgmr_degs_code in ('AW', 'PN')
-                           and shrdgmr_acyr_code = '1920'),
+                           and shrdgmr_levl_code in ('GR')
+                           and shrdgmr_acyr_code in ('2019', '2020')),
     grad_year_ay1920  = (select to_char(shrdgmr_grad_date, 'YYYY')
                          from shrdgmr
                          where shrdgmr_pidm = dsu_pidm
                            and shrdgmr_degc_code not like 'C%'
                            and shrdgmr_degs_code in ('AW', 'PN')
-                           and shrdgmr_acyr_code = '1920');
+                           and shrdgmr_levl_code in ('GR')
+                           and shrdgmr_acyr_code in ('2019', '2020'));
 
 -- Cumulative GPA
 update enroll.ipeds_npsas_sample_20 a
@@ -1098,14 +1114,10 @@ set cip2_ay1920 = (select s1.s_curr_cip2
                      and s1.s_curr_cip2 <> ' ');
 
 -- Current Major CIP Code 2
-update enroll.ipeds_npsas_sample_20
-set cum_credits_ay1920 = (select s1.s_cum_hrs_ugrad
-                          from students03@dscir s1
-                          where s1.dsc_pidm = dsu_pidm
-                            and s1.s_year = '2020'
-                            and s1.dsc_term_code = (select MAX(s2.dsc_term_code)
-                                                    from students03@dscir s2
-                                                    where s2.dsc_pidm = dsu_pidm and s2.s_year = '2020'));
+update enroll.ipeds_npsas_sample_20 a
+set cum_credits_ay1920 = (select f_split_fields(f_concat_as_of_cum_gpa(dsu_pidm,'202040','UG','I',NULL),1)
+                          from ipeds_npsas_sample_20 b
+                          where a.dsu_pidm = b.dsu_pidm);
 
 
 -- Charged Tuition Fees:
@@ -1301,7 +1313,6 @@ where ipeds_studentid in ('00398881','00394001','00399950','00394001','00413111'
 update enroll.ipeds_npsas_sample_20
 set rb_covid19_ay1920 = 0
 where rb_covid19_ay1920 is null;
-
 
 -- Update COVID-19 Tuition and Fee Refunds
 -- Gathered Refund for Fees from Campus
