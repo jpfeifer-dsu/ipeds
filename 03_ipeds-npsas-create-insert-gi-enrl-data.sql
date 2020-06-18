@@ -103,7 +103,6 @@ create table enroll.ipeds_npsas_sample_20
     last_enrl_month         varchar2(2),   -- Date Last Enrolled at this Institution (Month)
     last_enrl_day           varchar2(2),   -- Date Last Enrolled at this Institution (Day)
     last_enrl_year          varchar2(4),   -- Date Last Enrolled at this Institution (Year)
-
     degree_by_063020        varchar2(1),   -- Expected to complete degree requirements before June 30, 2020?
     has_xfer_hours          varchar2(1),   -- Has your institution accepted transfer credit for this student from another postsecondary institution?
     has_rem_dev_hours       varchar2(2),   -- Since completing high school, has the student taken any remedial/developmental courses to improve their basic skills in English, math, reading, or writing?
@@ -780,6 +779,24 @@ set last_enrl_month = (with cte_max_term_code as (select distinct
                          and spriden_change_ind is null
                          and a.dsu_pidm = b.dsu_pidm);
 
+--degree_by_063020
+update enroll.ipeds_npsas_sample_20 a
+set degree_by_063020 = (select distinct 1
+                        from enroll.ipeds_npsas_sample_20 b
+                        left join shrdgmr dg on dg.shrdgmr_pidm = b.dsu_pidm
+                         where a.dsu_pidm = b.dsu_pidm
+                          and shrdgmr_grad_date <= to_date('6 June 2020', 'DD MON YYYY')
+                          and shrdgmr_degs_code = 'AW');
+
+update enroll.ipeds_npsas_sample_20
+set degree_by_063020 = 0
+where degree_by_063020 is null;
+
+
+update enroll.ipeds_npsas_sample_20
+set degree_by_063020 = 0
+where degree_by_063020 is null;
+
 -- Transfer Credits Indicator
 update enroll.ipeds_npsas_sample_20
 set has_xfer_hours = case
@@ -1278,32 +1295,13 @@ commit;
 -- Location: G:\Shared drives\Institutional Effectiveness\IPEDS\ipeds-npsas\npsas-2020\additional docs
 
 update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 208
-where ipeds_studentid = '00398881';
+set rb_covid19_ay1920 = 1
+where ipeds_studentid in ('00398881','00394001','00399950','00394001','00413111','00404936', '00400210');
 
 update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 523
-where ipeds_studentid = '00394001';
+set rb_covid19_ay1920 = 0
+where rb_covid19_ay1920 is null;
 
-update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 700
-where ipeds_studentid = '00399950';
-
-update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 275
-where ipeds_studentid = '00394001';
-
-update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 232
-where ipeds_studentid = '00413111';
-
-update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 523
-where ipeds_studentid = '00404936';
-
-update enroll.ipeds_npsas_sample_20
-set rb_covid19_ay1920 = 450
-where ipeds_studentid = '00400210';
 
 -- Update COVID-19 Tuition and Fee Refunds
 -- Gathered Refund for Fees from Campus
