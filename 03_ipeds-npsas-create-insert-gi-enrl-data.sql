@@ -1107,6 +1107,7 @@ set cum_credits_ay1920 = (select s1.s_cum_hrs_ugrad
                                                     from students03@dscir s2
                                                     where s2.dsc_pidm = dsu_pidm and s2.s_year = '2020'));
 
+
 -- Charged Tuition Fees:
 update enroll.ipeds_npsas_sample_20
 set tuition_ay1920 = (select sum(tbraccd_amount)
@@ -1150,14 +1151,13 @@ set residency_ay1920 = case (select sgbstdn_resd_code
                                                                    where dsc_pidm = dsu_pidm)))
                            when 'R' then 2
                            when 'C' then 2
-                           when 'S' then 2
-                           when 'A' then 2
-                           when 'M' then 2
+                           when 'A' then 3
+                           when 'M' then 3
                            when 'G' then 3
-                           when 'N' then 3
-                           when '0' then 3
+                           when 'N' then 4
+                           when '0' then 4
+                           when 'S' then 4
                        end;
-
 
 -- Enrollments
 update enroll.ipeds_npsas_sample_20 a
