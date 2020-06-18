@@ -1030,17 +1030,10 @@ set grad_month_ay1920 = (select to_char(shrdgmr_grad_date, 'MM')
                            and shrdgmr_acyr_code = '1920');
 
 -- Cumulative GPA
---
-select * from shrlgpa where shrlgpa_gpa_type_ind = 'I';
-
-update enroll.ipeds_npsas_sample_20
-set cum_gpa_ay1920 = (select s1.s_cum_gpa_ugrad
-                      from students03@dscir s1
-                      where s1.dsc_pidm = dsu_pidm
-                        and s1.s_year = '2020'
-                        and s1.dsc_term_code = (select MAX(s2.dsc_term_code)
-                                                from students03@dscir s2
-                                                where s2.dsc_pidm = dsu_pidm and s2.s_year = '2020'));
+update enroll.ipeds_npsas_sample_20 a
+set cum_gpa_ay1920 = (select f_split_fields(f_concat_as_of_cum_gpa(dsu_pidm,'202040','UG','I'),5)
+                      from ipeds_npsas_sample_20 b
+                      where a.dsu_pidm = b.dsu_pidm);
 
 -- Current Major 1
 update enroll.ipeds_npsas_sample_20
@@ -1150,65 +1143,131 @@ set residency_ay1920 = case (select sgbstdn_resd_code
 
 
 -- Enrollments
-/*
- Need to include a case statement:
-    null = 0 (not enrolled)
-    F = 1 (full time) or >= 12 credits
-    Part Time is based on credit hours
-    s_term_att_cr 3/4 = 9 to 11.99 then 2
-    s_term_att_cr half = 6 to 8.99 then 3
-    s_term_att_cr < half < 6 then 4
- s_term_att_cr
+update enroll.ipeds_npsas_sample_20 a
+set enroll_summer_ptft_2019 = (select case
+                                          when SUM(sfrstcr_credit_hr) >= 12 then 1 -- Full-time
+                                          when SUM(sfrstcr_credit_hr) between 9 and 11.99 then 2 -- 3/4-time
+                                          when SUM(sfrstcr_credit_hr) between 6 and 8.99 then 3 -- half-time
+                                          when SUM(sfrstcr_credit_hr) < 6 then 4 -- lass than half-time
+                                      end as enroll_spring_ptft_2020
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '201930' --Spring 2020  202030 Summer 2020
+                               group by sfrstcr_pidm, sfrstcr_term_code),
+    enroll_summer_hrs_2019  = (select sum(r1.sfrstcr_credit_hr)
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '201930'
+                               group by sfrstcr_pidm, sfrstcr_term_code);
 
- */
+update enroll.ipeds_npsas_sample_20 a
+set enroll_fall_ptft_2019 = (select case
+                                          when SUM(sfrstcr_credit_hr) >= 12 then 1 -- Full-time
+                                          when SUM(sfrstcr_credit_hr) between 9 and 11.99 then 2 -- 3/4-time
+                                          when SUM(sfrstcr_credit_hr) between 6 and 8.99 then 3 -- half-time
+                                          when SUM(sfrstcr_credit_hr) < 6 then 4 -- lass than half-time
+                                      end as enroll_spring_ptft_2020
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '201940' --Spring 2020  202030 Summer 2020
+                               group by sfrstcr_pidm, sfrstcr_term_code),
+    enroll_fall_hrs_2019  = (select sum(r1.sfrstcr_credit_hr)
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '201940'
+                               group by sfrstcr_pidm, sfrstcr_term_code);
+
+update enroll.ipeds_npsas_sample_20 a
+set enroll_spring_ptft_2020 = (select case
+                                          when SUM(sfrstcr_credit_hr) >= 12 then 1 -- Full-time
+                                          when SUM(sfrstcr_credit_hr) between 9 and 11.99 then 2 -- 3/4-time
+                                          when SUM(sfrstcr_credit_hr) between 6 and 8.99 then 3 -- half-time
+                                          when SUM(sfrstcr_credit_hr) < 6 then 4 -- lass than half-time
+                                      end as enroll_spring_ptft_2020
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '202020' --Spring 2020  202030 Summer 2020
+                               group by sfrstcr_pidm, sfrstcr_term_code),
+    enroll_spring_hrs_2020  = (select sum(r1.sfrstcr_credit_hr)
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '202020'
+                               group by sfrstcr_pidm, sfrstcr_term_code);
 
 
-select SUM(sfrstcr_credit_hr),
-       sfrstcr_pidm,
-       sfrstcr_term_code
-from  sfrstcr r1
-inner join ipeds_npsas_sample_20 n on n.dsu_pidm = r1.sfrstcr_pidm
-left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
-where r2.stvrsts_incl_sect_enrl = 'Y'
-and sfrstcr_term_code = '202020' --Spring 2020  202030 Summer 2020
-group by        sfrstcr_pidm,
-       sfrstcr_term_code;
 
-select *
-from stvrsts;
-;
+update enroll.ipeds_npsas_sample_20 a
+set enroll_summer_ptft_2020 = (select case
+                                          when SUM(sfrstcr_credit_hr) >= 12 then 1 -- Full-time
+                                          when SUM(sfrstcr_credit_hr) between 9 and 11.99 then 2 -- 3/4-time
+                                          when SUM(sfrstcr_credit_hr) between 6 and 8.99 then 3 -- half-time
+                                          when SUM(sfrstcr_credit_hr) < 6 then 4 -- lass than half-time
+                                      end as enroll_spring_ptft_2020
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '202030'
+                               group by sfrstcr_pidm, sfrstcr_term_code),
+    enroll_summer_hrs_2020  = (select sum(r1.sfrstcr_credit_hr)
+                               from ipeds_npsas_sample_20 b
+                               left join sfrstcr r1 on b.dsu_pidm = r1.sfrstcr_pidm
+                               left join stvrsts r2 on r1.sfrstcr_rsts_code = r2.stvrsts_code
+                               where a.dsu_pidm = b.dsu_pidm
+                                 and r2.stvrsts_incl_sect_enrl = 'Y'
+                                 and sfrstcr_term_code = '202030'
+                               group by sfrstcr_pidm, sfrstcr_term_code);
 
 update enroll.ipeds_npsas_sample_20
-set enroll_summer_ptft_2019 = (select s_pt_ft
-                               from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20193E'),
-    enroll_summer_hrs_2019  = (select s_term_att_cr / 10
-                               from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20193E');
+set enroll_summer_ptft_2019 = 0
+where enroll_summer_ptft_2019 is null;
 
 update enroll.ipeds_npsas_sample_20
-set enroll_fall_ptft_2019 = (select s_pt_ft
-                             from students03@dscir
-                             where dsc_pidm = dsu_pidm and dsc_term_code = '20194E'),
-    enroll_fall_hrs_2019  = (select s_term_att_cr / 10
-                             from students03@dscir
-                             where dsc_pidm = dsu_pidm and dsc_term_code = '20194E');
+set enroll_summer_hrs_2019 = 0
+where enroll_summer_hrs_2019 is null;
 
 update enroll.ipeds_npsas_sample_20
-set enroll_spring_ptft_2020 = (select s_pt_ft
-                               from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20202E'),
-    enroll_spring_hrs_2020  = (select s_term_att_cr
-                               from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20202E');
+set enroll_fall_ptft_2019= 0
+where enroll_fall_ptft_2019 is null;
 
 update enroll.ipeds_npsas_sample_20
-set enroll_summer_ptft_2020 = (select s_pt_ft
-                               from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20203E'),
-    enroll_spring_hrs_2020  = (select s_term_att_cr
-                               from students03@dscir
-                               where dsc_pidm = dsu_pidm and dsc_term_code = '20203E');
+set enroll_fall_hrs_2019 = 0
+where enroll_fall_hrs_2019 is null;
+
+update enroll.ipeds_npsas_sample_20
+set enroll_spring_ptft_2020 = 0
+where enroll_spring_ptft_2020 is null;
+
+update enroll.ipeds_npsas_sample_20
+set enroll_spring_hrs_2020 = 0
+where enroll_spring_hrs_2020 is null;
+
+update enroll.ipeds_npsas_sample_20
+set enroll_summer_ptft_2020 = 0
+where enroll_summer_ptft_2020 is null;
+
+update enroll.ipeds_npsas_sample_20
+set enroll_summer_hrs_2020 = 0
+where enroll_summer_hrs_2020 is null;
 
 commit;
 
