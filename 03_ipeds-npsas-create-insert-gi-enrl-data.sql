@@ -814,11 +814,11 @@ set has_rem_dev_hours = case
                                         where dsu_pidm = pidm_key
                                           and ((subj_code = ('MATH') and
                                                 (crse_number like '0%' or crse_number in ('1000', '1010'))) or
-                                               (subj_code = ('ENGL') and (crse_number like '0%' or crse_number = ('1470')))))
+                                               (subj_code = ('ENGL') and
+                                                (crse_number like '0%' or crse_number = ('1470') or (crse_number < 1000)))))
                                 then 1
                             else 0
                         end;
-
 
 -- First-time Student
 update enroll.ipeds_npsas_sample_20
