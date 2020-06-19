@@ -553,6 +553,14 @@ select 1 as file_spec_ver_num,
           and rfrbase_fsrc_code = 'PRIV'
           and rpratrm_period in ('201930', '201940', '202020')) as private_program_2_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = private_program_2) as private_program_2_type,
+       (select distinct case when rfrbase_fsrc_code = 'FDRL' then 3 else 4 end
+        from rpratrm,
+             rfrbase
+        where rpratrm_pidm = pidm
+          and rfrbase_fund_code = rpratrm_fund_code
+          and rpratrm_fund_code = private_program_2
+          and rfrbase_fsrc_code = 'PRIV'
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_2_src,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
              rfrbase
@@ -570,6 +578,14 @@ select 1 as file_spec_ver_num,
           and rfrbase_fsrc_code = 'PRIV'
           and rpratrm_period in ('201930', '201940', '202020')) as private_program_3_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = private_program_3) as private_program_3_type,
+       (select distinct case when rfrbase_fsrc_code = 'FDRL' then 3 else 4 end
+        from rpratrm,
+             rfrbase
+        where rpratrm_pidm = pidm
+          and rfrbase_fund_code = rpratrm_fund_code
+          and rpratrm_fund_code = private_program_3
+          and rfrbase_fsrc_code = 'PRIV'
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_3_src,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
              rfrbase
