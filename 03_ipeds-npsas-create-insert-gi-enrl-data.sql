@@ -382,6 +382,26 @@ set phone1_type = '3'
 where phone1_number is not null
   and phone1_type is null;
 
+-- Student's Other Phone Area Code and Phone Number
+update enroll.ipeds_npsas_sample_20
+set phone1_number = (select substr(s1.sprtele_phone_area || s1.sprtele_phone_number, 1, 10)
+                     from sprtele s1
+                     where s1.sprtele_pidm = dsu_pidm
+                       and LENGTH(trim(translate(s1.sprtele_phone_area, ' +-.0123456789', ' '))) is null
+                       and LENGTH(s1.sprtele_phone_area) = '3'
+                       and s1.sprtele_seqno = (select MAX(s2.sprtele_seqno)
+                                               from sprtele s2
+                                               where s2.sprtele_pidm = s1.sprtele_pidm
+                                                 and LENGTH(
+                                                         trim(translate(s1.sprtele_phone_area, ' +-.0123456789', ' '))) is null
+                                                 and LENGTH(s1.sprtele_phone_area) = '3'))
+where phone1_number is null;
+
+update enroll.ipeds_npsas_sample_20
+set phone1_type = '3'
+where phone1_number is not null
+  and phone1_type is null;
+
 -- Student's Campus Email Address
 update enroll.ipeds_npsas_sample_20
 set email_campus = (select goremal_email_address

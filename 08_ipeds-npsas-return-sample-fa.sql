@@ -385,9 +385,9 @@ select 1 as file_spec_ver_num,
        '230171' as institute_id,
        study_id,
        banner_id as student_id,
-       first_name,
-       middle_name,
-       last_name,
+--        first_name,
+--        middle_name,
+--        last_name,
        financial_aid_warning,
        financial_aid_probation,
        financial_aid_ineligibility,
@@ -528,6 +528,14 @@ select 1 as file_spec_ver_num,
           and rfrbase_fsrc_code = 'PRIV'
           and rpratrm_period in ('201930', '201940', '202020')) as private_program_1_name,
        (select np_fund_type from npsas_fund_lookup where np_fund_code = private_program_1) as private_program_1_type,
+       (select distinct case when rfrbase_fsrc_code = 'FDRL' then 3 else 4 end
+        from rpratrm,
+             rfrbase
+        where rpratrm_pidm = pidm
+          and rfrbase_fund_code = rpratrm_fund_code
+          and rpratrm_fund_code = private_program_1
+          and rfrbase_fsrc_code = 'PRIV'
+          and rpratrm_period in ('201930', '201940', '202020')) as private_program_1_src,
        (select SUM(rpratrm_orig_offer_amt)
         from rpratrm,
              rfrbase
