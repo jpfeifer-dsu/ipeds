@@ -283,6 +283,18 @@ set race_hawaiian = case when ethnicity = 'P' then 1 else 0 end;
 update enroll.ipeds_npsas_sample_20
 set ethnicity = case when ethnicity = 'H' then 1 when ethnicity = 'U' then -1 else 0 end;
 
+update enroll.ipeds_npsas_sample_20
+set race_white    = -1,
+    race_black    = -1,
+    race_asian    = -1,
+    race_indian= -1,
+    race_hawaiian = -1
+where race_white = 0
+  and race_black = 0
+  and race_asian = 0
+  and race_indian = 0
+  and race_hawaiian = 0;
+
 -- Permanent Address
 update enroll.ipeds_npsas_sample_20
 set perm_add_line1   = dsc.f_get_formatted_addr(dsu_pidm, 'CC_PERM', 'street1'),
