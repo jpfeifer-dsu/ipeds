@@ -816,7 +816,7 @@ set has_rem_dev_hours = case
                                                 (crse_number like '0%' or crse_number in ('1000', '1010'))) or
                                                (subj_code = ('ENGL') and
                                                 (crse_number like '0%' or crse_number = ('1470')
-                                                     or (crse_number < '1000')))))
+                                                     or (crse_number < '1000') or (subj_code = ('ESL'))))))
                                 then 1
                             else 0
                         end;
