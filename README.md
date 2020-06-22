@@ -36,8 +36,11 @@ Have the Director of Institutional Data Governance review the General Info and E
 
 ### Step 10 Submit CSV Files to IPEDS
 Sign into the NPSAS Portal at https://surveys.nces.ed.gov/Portal/
+
 You will want to choose CSV mode and then upload the files 
+
 Fix any errors and repeat the process until all of the errors are gone
+
 Review and submit to NPSAS
 
 
