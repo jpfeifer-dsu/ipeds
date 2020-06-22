@@ -29,12 +29,20 @@ For the FA Aid file, you need to update the npsas_fund_lookup table by running t
 * 08_ipeds-npsas-return-sample-fa.sql
 
 ### Step 8 Review Data
-Have FA review the Budget and FA files 
+Have FA review the Budget and FA files
+Have the Director of Institutional Data Governance review the General Info and Enrollment Files
+
+### Step 9 Upload Files
+Sign into the NPSAS Portal at https://surveys.nces.ed.gov/Portal/
+
   
 Have the Data Governance Director review the General Information and Enrollment files  
 
 ### Step 9 Submit CSV Files to IPEDS
-Submit the csv files to IPEDS-NPSAS by following the instructions provided in the CsvSpecs_230171.xlsx spreadsheet.
+Submit the csv files to IPEDS-NPSAS by following the instructions provided in the CsvSpecs_230171.xlsx spreadsheet
+You will want to choose CSV mode and then upload the files 
+Fix any errors and repeat the process until all of the errors are gone
+Review and submit to NPSAS
 
 
 
