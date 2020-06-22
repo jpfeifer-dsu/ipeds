@@ -31,6 +31,7 @@ Export results as a csv with **no headers**:
 
 ### Step 9 Review Data
 Have FA review the Budget and FA files
+
 Have the Director of Institutional Data Governance review the General Info and Enrollment Files
 
 ### Step 10 Submit CSV Files to IPEDS
